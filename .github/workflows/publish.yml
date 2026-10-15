@@ -1,0 +1,34 @@
+# Release workflow for the iOS SDK (SwiftPM + CocoaPods `Lockally`).
+#
+# TEMPLATE — inert in this monorepo. Copy to `.github/workflows/publish.yml` in
+# the SDK's own repo (github.com/lockallyinc/lockally-swift). Tag-driven:
+# push `vX.Y.Z`.
+#
+# Swift Package Manager needs NO publish step — a git tag IS the release; apps
+# depend on the repo URL + version. This workflow validates the build/tests and
+# pushes the CocoaPods spec for teams still on CocoaPods.
+#
+# One-time setup:
+#   - Register the pod once: `pod trunk register support@lockally.com 'Lockally'`
+#     (confirm via the emailed link), then store the trunk token as repo secret
+#     COCOAPODS_TRUNK_TOKEN. Claude never handles this token.
+name: Publish (SwiftPM tag + CocoaPods)
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: macos-15   # Xcode 16 / Swift 6 (Package.swift is swift-tools 6.0)
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build & test (SwiftPM release is the git tag itself)
+        run: swift build && swift test
+      - name: Push CocoaPods spec
+        run: pod trunk push Lockally.podspec --allow-warnings
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
