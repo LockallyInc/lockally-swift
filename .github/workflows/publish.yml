@@ -1,0 +1,89 @@
+# Release workflow for the iOS SDK (SwiftPM + CocoaPods `Lockally`).
+#
+# TEMPLATE — inert in this monorepo. Copy to `.github/workflows/publish.yml` in
+# the SDK's own repo (github.com/lockallyinc/lockally-swift). Tag-driven:
+# push `vX.Y.Z`.
+#
+# Swift Package Manager needs NO publish step — a git tag IS the release; apps
+# depend on the repo URL + version. This workflow validates the build/tests and
+# pushes the CocoaPods spec for teams still on CocoaPods.
+#
+# One-time setup:
+#   - Register the pod once: `pod trunk register support@lockally.com 'Lockally'`
+#     (confirm via the emailed link), then store the trunk token as repo secret
+#     COCOAPODS_TRUNK_TOKEN. Claude never handles this token.
+name: Publish (SwiftPM tag + CocoaPods)
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: macos-15   # Xcode 16 / Swift 6 (Package.swift is swift-tools 6.0)
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build & test (SwiftPM release is the git tag itself)
+        run: swift build && swift test
+      # Push, then VERIFY against trunk rather than trusting the exit code.
+      #
+      # Three consecutive releases failed here (0.3.1, 0.3.2, 0.3.3) with the
+      # same message:
+      #
+      #   [!] Calling the GitHub commit API timed out.
+      #
+      # Every time, validation had already SUCCEEDED, taking about six and a
+      # half minutes: `pod trunk push` builds a test app for iOS, macOS, tvOS
+      # and watchOS before it uploads. The timeout is on the commit trunk makes
+      # to the Specs repo afterwards, not on anything we control.
+      #
+      # It is also not a reliable signal. On 0.3.1 the timeout MASKED a
+      # SUCCESS: retrying returned "duplicate entry", because the first push
+      # had landed. So a red job can mean published, and a green one is the
+      # only thing that has ever meant it for certain. Exit code alone cannot
+      # tell you which, which is why this verifies.
+      #
+      # Two changes. Validation is trimmed, because the repo already ran
+      # `swift build && swift test` in the step above and re-validating across
+      # four platforms is what puts the upload six minutes past the start.
+      # And the result is checked against the trunk API, with the push retried
+      # only if the version genuinely is not there.
+      - name: Push CocoaPods spec, then verify it landed
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        run: |
+          set -uo pipefail
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "Publishing Lockally $VERSION"
+
+          on_trunk() {
+            curl -fsS "https://trunk.cocoapods.org/api/v1/pods/Lockally" \
+              | python3 -c "import sys,json;print(any(v['name']=='$VERSION' for v in json.load(sys.stdin)['versions']))" \
+              2>/dev/null
+          }
+
+          for attempt in 1 2; do
+            echo "::group::pod trunk push (attempt $attempt)"
+            pod trunk push Lockally.podspec \
+              --allow-warnings \
+              --skip-import-validation \
+              --skip-tests || echo "push exited non-zero; verifying before deciding"
+            echo "::endgroup::"
+
+            # Trunk's CDN lags its own write by a little; give it a chance
+            # before concluding the push failed.
+            for wait in 10 20 30 60; do
+              sleep "$wait"
+              if [ "$(on_trunk)" = "True" ]; then
+                echo "Lockally $VERSION is live on CocoaPods trunk."
+                exit 0
+              fi
+            done
+            echo "Not on trunk yet after attempt $attempt."
+          done
+
+          echo "::error::Lockally $VERSION is not on CocoaPods trunk after two pushes."
+          exit 1
