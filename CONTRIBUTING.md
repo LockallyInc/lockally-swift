@@ -16,7 +16,7 @@ is wrong. A patch to a generated file is still welcome as a demonstration of
 what the output should be; say so in the pull request and we will move it into
 the spec.
 
-**Hand-written.** The authentication and ergonomics layer, the tests beside it, the packaging manifest, and the CI and publish workflows under . These files are not generated, and a patch to
+**Hand-written.** The authentication and ergonomics layer, the tests beside it, the packaging manifest, and the CI and publish workflows under `.github/`. These files are not generated, and a patch to
 them is an ordinary patch: we carry it into the source tree and it ships from
 then on.
 
