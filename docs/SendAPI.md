@@ -112,7 +112,7 @@ Name | Type | Description  | Notes
 
 # **getMessageStats**
 ```swift
-    open class func getMessageStats(from: Date? = nil, to: Date? = nil, domain: String? = nil, completion: @escaping (_ data: MessageStats?, _ error: Error?) -> Void)
+    open class func getMessageStats(from: Date? = nil, to: Date? = nil, domain: String? = nil, tag: String? = nil, completion: @escaping (_ data: MessageStats?, _ error: Error?) -> Void)
 ```
 
 Aggregate delivery stats
@@ -127,9 +127,10 @@ import Lockally
 let from = Date() // Date | Window start (default 7 days ago). (optional)
 let to = Date() // Date | Window end (default now). (optional)
 let domain = "domain_example" // String | Filter by sender domain. (optional)
+let tag = "tag_example" // String | Group the window by the sender's own tags: one tag, or a comma-separated set meaning ANY. Case-insensitive. This is the dimension that tells a transactional stream from a notification one. (optional)
 
 // Aggregate delivery stats
-SendAPI.getMessageStats(from: from, to: to, domain: domain) { (response, error) in
+SendAPI.getMessageStats(from: from, to: to, domain: domain, tag: tag) { (response, error) in
     guard error == nil else {
         print(error)
         return
@@ -148,6 +149,7 @@ Name | Type | Description  | Notes
  **from** | **Date** | Window start (default 7 days ago). | [optional] 
  **to** | **Date** | Window end (default now). | [optional] 
  **domain** | **String** | Filter by sender domain. | [optional] 
+ **tag** | **String** | Group the window by the sender&#39;s own tags: one tag, or a comma-separated set meaning ANY. Case-insensitive. This is the dimension that tells a transactional stream from a notification one. | [optional] 
 
 ### Return type
 
@@ -166,7 +168,7 @@ Name | Type | Description  | Notes
 
 # **listMessages**
 ```swift
-    open class func listMessages(status: Status_listMessages? = nil, sender: String? = nil, q: String? = nil, since: Date? = nil, cursor: String? = nil, limit: Int? = nil, completion: @escaping (_ data: ListMessages200Response?, _ error: Error?) -> Void)
+    open class func listMessages(status: Status_listMessages? = nil, sender: String? = nil, tag: String? = nil, q: String? = nil, since: Date? = nil, cursor: String? = nil, limit: Int? = nil, sort: Sort_listMessages? = nil, order: Order_listMessages? = nil, completion: @escaping (_ data: ListMessages200Response?, _ error: Error?) -> Void)
 ```
 
 List outbound messages
@@ -180,13 +182,16 @@ import Lockally
 
 let status = "status_example" // String |  (optional)
 let sender = "sender_example" // String | Exact match against the `from` mailbox. (optional)
+let tag = "tag_example" // String | Filter to messages carrying any of these tags. One tag, or a comma-separated set meaning ANY. Case-insensitive: the value is normalised the same way tags are on write. (optional)
 let q = "q_example" // String | Free-text search across subject + sender. (optional)
 let since = Date() // Date | Only messages queued at or after this RFC 3339 instant. (optional)
 let cursor = "cursor_example" // String | queued_at of the prior page boundary. Pass back the `next_cursor` returned by the previous call. (optional)
 let limit = 987 // Int |  (optional) (default to 50)
+let sort = "sort_example" // String | Field to order by. Only indexed columns are offered: an unindexed sort on this table is a full scan of the account's send history. status and sender are filters instead. (optional) (default to .queuedAt)
+let order = "order_example" // String | Defaults to desc for the default field and asc for any other. The order is always made total by a tie-break on id, so paging cannot repeat or skip a row that shares a timestamp. cursor encodes queued_at, so combining it with another sort is a 400 rather than a wrong page. (optional)
 
 // List outbound messages
-SendAPI.listMessages(status: status, sender: sender, q: q, since: since, cursor: cursor, limit: limit) { (response, error) in
+SendAPI.listMessages(status: status, sender: sender, tag: tag, q: q, since: since, cursor: cursor, limit: limit, sort: sort, order: order) { (response, error) in
     guard error == nil else {
         print(error)
         return
@@ -204,10 +209,13 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **status** | **String** |  | [optional] 
  **sender** | **String** | Exact match against the &#x60;from&#x60; mailbox. | [optional] 
+ **tag** | **String** | Filter to messages carrying any of these tags. One tag, or a comma-separated set meaning ANY. Case-insensitive: the value is normalised the same way tags are on write. | [optional] 
  **q** | **String** | Free-text search across subject + sender. | [optional] 
  **since** | **Date** | Only messages queued at or after this RFC 3339 instant. | [optional] 
  **cursor** | **String** | queued_at of the prior page boundary. Pass back the &#x60;next_cursor&#x60; returned by the previous call. | [optional] 
  **limit** | **Int** |  | [optional] [default to 50]
+ **sort** | **String** | Field to order by. Only indexed columns are offered: an unindexed sort on this table is a full scan of the account&#39;s send history. status and sender are filters instead. | [optional] [default to .queuedAt]
+ **order** | **String** | Defaults to desc for the default field and asc for any other. The order is always made total by a tie-break on id, so paging cannot repeat or skip a row that shares a timestamp. cursor encodes queued_at, so combining it with another sort is a 400 rather than a wrong page. | [optional] 
 
 ### Return type
 
@@ -239,7 +247,7 @@ Submits an email for delivery via lockally. Returns 202 immediately once the mes
 import Lockally
 
 let idempotencyKey = "idempotencyKey_example" // String | 
-let sendEmailRequest = sendEmail_request(from: "from_example", to: ["to_example"], cc: ["cc_example"], bcc: ["bcc_example"], subject: "subject_example", text: "text_example", html: "html_example", headers: "TODO", replyTo: "replyTo_example", replyToName: "replyToName_example", unsubscribe: false, templateId: 123, variables: "TODO", sendAt: Date(), attachments: [sendEmail_request_attachments_inner(filename: "filename_example", contentType: "contentType_example", contentBase64: "contentBase64_example")]) // SendEmailRequest | 
+let sendEmailRequest = sendEmail_request(from: "from_example", to: ["to_example"], cc: ["cc_example"], bcc: ["bcc_example"], subject: "subject_example", text: "text_example", html: "html_example", headers: "TODO", replyTo: "replyTo_example", replyToName: "replyToName_example", unsubscribe: false, templateId: 123, variables: "TODO", sendAt: Date(), metadata: "TODO", tags: ["tags_example"], trackOpens: false, trackClicks: false, attachments: [sendEmail_request_attachments_inner(filename: "filename_example", contentType: "contentType_example", contentBase64: "contentBase64_example")]) // SendEmailRequest | 
 
 // Send an email
 SendAPI.sendEmail(idempotencyKey: idempotencyKey, sendEmailRequest: sendEmailRequest) { (response, error) in
@@ -291,7 +299,7 @@ Sends up to 500 messages in one call. Each is validated and enqueued independent
 import Lockally
 
 let idempotencyKey = "idempotencyKey_example" // String | 
-let sendEmailBatchRequest = sendEmailBatch_request(messages: [SendMessage(from: "from_example", to: ["to_example"], cc: ["cc_example"], bcc: ["bcc_example"], subject: "subject_example", text: "text_example", html: "html_example", headers: "TODO", replyTo: "replyTo_example", replyToName: "replyToName_example", unsubscribe: false, templateId: 123, variables: "TODO", sendAt: Date(), attachments: [sendEmail_request_attachments_inner(filename: "filename_example", contentType: "contentType_example", contentBase64: "contentBase64_example")])]) // SendEmailBatchRequest | 
+let sendEmailBatchRequest = sendEmailBatch_request(messages: [SendMessage(from: "from_example", to: ["to_example"], cc: ["cc_example"], bcc: ["bcc_example"], subject: "subject_example", text: "text_example", html: "html_example", headers: "TODO", replyTo: "replyTo_example", replyToName: "replyToName_example", unsubscribe: false, templateId: 123, variables: "TODO", sendAt: Date(), attachments: [sendEmail_request_attachments_inner(filename: "filename_example", contentType: "contentType_example", contentBase64: "contentBase64_example")])], variables: "TODO") // SendEmailBatchRequest | 
 
 // Send a batch of emails
 SendAPI.sendEmailBatch(idempotencyKey: idempotencyKey, sendEmailBatchRequest: sendEmailBatchRequest) { (response, error) in

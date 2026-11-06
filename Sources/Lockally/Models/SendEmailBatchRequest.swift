@@ -11,13 +11,17 @@ public struct SendEmailBatchRequest: Sendable, Codable, Hashable {
 
     public static let messagesRule = ArrayRule(minItems: 1, maxItems: 500, uniqueItems: false)
     public var messages: [SendMessage]
+    /** Template variables every message in the batch inherits. Each message's own `variables` override these key by key, so shared values are written once and per-recipient ones stay per-recipient.  Without this, a 500-message batch repeats every shared variable 500 times: most of the payload, and 500 places for one of them to differ by a typo.  */
+    public var variables: [String: String]?
 
-    public init(messages: [SendMessage]) {
+    public init(messages: [SendMessage], variables: [String: String]? = nil) {
         self.messages = messages
+        self.variables = variables
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case messages
+        case variables
     }
 
     // Encodable protocol methods
@@ -25,6 +29,7 @@ public struct SendEmailBatchRequest: Sendable, Codable, Hashable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(messages, forKey: .messages)
+        try container.encodeIfPresent(variables, forKey: .variables)
     }
 }
 

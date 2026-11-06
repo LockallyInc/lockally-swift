@@ -22,13 +22,16 @@ public struct BatchResult: Sendable, Codable, Hashable {
     public var status: Status?
     /** Present when this message failed; the others are then absent. */
     public var error: String?
+    /** Advisory, and NOT a failure. Today the only one is a template variable the template referenced and the request never supplied, which rendered as the empty string. */
+    public var warning: String?
 
-    public init(index: Int? = nil, id: UUID? = nil, messageId: String? = nil, status: Status? = nil, error: String? = nil) {
+    public init(index: Int? = nil, id: UUID? = nil, messageId: String? = nil, status: Status? = nil, error: String? = nil, warning: String? = nil) {
         self.index = index
         self.id = id
         self.messageId = messageId
         self.status = status
         self.error = error
+        self.warning = warning
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
@@ -37,6 +40,7 @@ public struct BatchResult: Sendable, Codable, Hashable {
         case messageId = "message_id"
         case status
         case error
+        case warning
     }
 
     // Encodable protocol methods
@@ -48,6 +52,7 @@ public struct BatchResult: Sendable, Codable, Hashable {
         try container.encodeIfPresent(messageId, forKey: .messageId)
         try container.encodeIfPresent(status, forKey: .status)
         try container.encodeIfPresent(error, forKey: .error)
+        try container.encodeIfPresent(warning, forKey: .warning)
     }
 }
 

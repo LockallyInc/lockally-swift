@@ -315,7 +315,7 @@ Name | Type | Description  | Notes
 
 # **listDomains**
 ```swift
-    open class func listDomains(completion: @escaping (_ data: ListDomains200Response?, _ error: Error?) -> Void)
+    open class func listDomains(sort: Sort_listDomains? = nil, order: Order_listDomains? = nil, completion: @escaping (_ data: ListDomains200Response?, _ error: Error?) -> Void)
 ```
 
 List domains
@@ -327,9 +327,11 @@ Returns every domain registered under the calling tenant.
 // The following code samples are still beta. For any issue, please report via http://github.com/OpenAPITools/openapi-generator/issues/new
 import Lockally
 
+let sort = "sort_example" // String | Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. (optional) (default to .createdAt)
+let order = "order_example" // String | Defaults to desc for the default field and asc for any other. Always tie-broken on id, so the order is total. (optional)
 
 // List domains
-DomainsAPI.listDomains() { (response, error) in
+DomainsAPI.listDomains(sort: sort, order: order) { (response, error) in
     guard error == nil else {
         print(error)
         return
@@ -342,7 +344,11 @@ DomainsAPI.listDomains() { (response, error) in
 ```
 
 ### Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **sort** | **String** | Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. | [optional] [default to .createdAt]
+ **order** | **String** | Defaults to desc for the default field and asc for any other. Always tie-broken on id, so the order is total. | [optional] 
 
 ### Return type
 

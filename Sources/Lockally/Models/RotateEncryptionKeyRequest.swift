@@ -9,11 +9,11 @@ import Foundation
 
 public struct RotateEncryptionKeyRequest: Sendable, Codable, Hashable {
 
-    public var mailboxEmail: String
+    public var mailboxEmail: String?
     public var encryptedPrivateKey: String
     public var kdfParams: JSONValue?
 
-    public init(mailboxEmail: String, encryptedPrivateKey: String, kdfParams: JSONValue? = nil) {
+    public init(mailboxEmail: String? = nil, encryptedPrivateKey: String, kdfParams: JSONValue? = nil) {
         self.mailboxEmail = mailboxEmail
         self.encryptedPrivateKey = encryptedPrivateKey
         self.kdfParams = kdfParams
@@ -29,7 +29,7 @@ public struct RotateEncryptionKeyRequest: Sendable, Codable, Hashable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(mailboxEmail, forKey: .mailboxEmail)
+        try container.encodeIfPresent(mailboxEmail, forKey: .mailboxEmail)
         try container.encode(encryptedPrivateKey, forKey: .encryptedPrivateKey)
         try container.encodeIfPresent(kdfParams, forKey: .kdfParams)
     }

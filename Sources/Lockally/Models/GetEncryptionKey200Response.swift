@@ -15,14 +15,24 @@ public struct GetEncryptionKey200Response: Sendable, Codable, Hashable {
     public var encryptedPrivateKey: String?
     public var kdfParams: JSONValue?
     public var version: Int?
+    public var createdAt: Date?
+    public var rotatedAt: Date?
+    public var hasRecovery: Bool?
+    public var recoverySetAt: Date?
+    public var recoveryBlob: String?
 
-    public init(id: UUID? = nil, email: String? = nil, publicKey: String? = nil, encryptedPrivateKey: String? = nil, kdfParams: JSONValue? = nil, version: Int? = nil) {
+    public init(id: UUID? = nil, email: String? = nil, publicKey: String? = nil, encryptedPrivateKey: String? = nil, kdfParams: JSONValue? = nil, version: Int? = nil, createdAt: Date? = nil, rotatedAt: Date? = nil, hasRecovery: Bool? = nil, recoverySetAt: Date? = nil, recoveryBlob: String? = nil) {
         self.id = id
         self.email = email
         self.publicKey = publicKey
         self.encryptedPrivateKey = encryptedPrivateKey
         self.kdfParams = kdfParams
         self.version = version
+        self.createdAt = createdAt
+        self.rotatedAt = rotatedAt
+        self.hasRecovery = hasRecovery
+        self.recoverySetAt = recoverySetAt
+        self.recoveryBlob = recoveryBlob
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
@@ -32,6 +42,11 @@ public struct GetEncryptionKey200Response: Sendable, Codable, Hashable {
         case encryptedPrivateKey = "encrypted_private_key"
         case kdfParams = "kdf_params"
         case version
+        case createdAt = "created_at"
+        case rotatedAt = "rotated_at"
+        case hasRecovery = "has_recovery"
+        case recoverySetAt = "recovery_set_at"
+        case recoveryBlob = "recovery_blob"
     }
 
     // Encodable protocol methods
@@ -44,6 +59,11 @@ public struct GetEncryptionKey200Response: Sendable, Codable, Hashable {
         try container.encodeIfPresent(encryptedPrivateKey, forKey: .encryptedPrivateKey)
         try container.encodeIfPresent(kdfParams, forKey: .kdfParams)
         try container.encodeIfPresent(version, forKey: .version)
+        try container.encodeIfPresent(createdAt, forKey: .createdAt)
+        try container.encodeIfPresent(rotatedAt, forKey: .rotatedAt)
+        try container.encodeIfPresent(hasRecovery, forKey: .hasRecovery)
+        try container.encodeIfPresent(recoverySetAt, forKey: .recoverySetAt)
+        try container.encodeIfPresent(recoveryBlob, forKey: .recoveryBlob)
     }
 }
 

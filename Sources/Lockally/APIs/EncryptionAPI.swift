@@ -65,6 +65,7 @@ open class EncryptionAPI {
     /**
      Upload an encryption key pair
      - POST /v1/encryption/keys
+     - Only the mailbox's own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox's password, which an administrator never has. `mailbox_email`, if sent, must be the caller's own mailbox. A mailbox that already has a key is starting over: the old key is kept inactive, not destroyed, and the new one starts without a recovery code.
      - Bearer Token:
        - type: http
        - name: bearerAuth
@@ -104,6 +105,7 @@ open class EncryptionAPI {
     /**
      Store an encryption recovery blob
      - POST /v1/encryption/recovery
+     - Only the mailbox's own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox's password, which an administrator never has. `mailbox_email`, if sent, must be the caller's own mailbox. The blob is the private key sealed under a recovery code the browser generated; the code itself is never sent. Replaces any earlier one.
      - Bearer Token:
        - type: http
        - name: bearerAuth
@@ -143,6 +145,7 @@ open class EncryptionAPI {
     /**
      Get encryption key for a mailbox
      - GET /v1/encryption/keys/{email}
+     - Anyone in the workspace gets the public key. The mailbox's own webmail session also gets its sealed private key, its sealed recovery copy and the recovery state.
      - Bearer Token:
        - type: http
        - name: bearerAuth
@@ -172,7 +175,45 @@ open class EncryptionAPI {
     }
 
     /**
-     Rotate an encryption key
+     End-to-end encryption status for the workspace
+     
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: GetEncryptionStatus200Response
+     */
+    open class func getEncryptionStatus(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> GetEncryptionStatus200Response {
+        return try await getEncryptionStatusWithRequestBuilder(apiConfiguration: apiConfiguration).execute().body
+    }
+
+    /**
+     End-to-end encryption status for the workspace
+     - GET /v1/encryption/status
+     - For administrators: whether the add-on is on, and for each mailbox whether it has a key and a recovery code. Carries no key material.
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: RequestBuilder<GetEncryptionStatus200Response> 
+     */
+    open class func getEncryptionStatusWithRequestBuilder(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<GetEncryptionStatus200Response> {
+        let localVariablePath = "/v1/encryption/status"
+        let localVariableURLString = apiConfiguration.basePath + localVariablePath
+        let localVariableParameters: [String: any Sendable]? = nil
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: (any Sendable)?] = [
+            :
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<GetEncryptionStatus200Response>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "GET", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
+    }
+
+    /**
+     Re-seal an encryption key under a new password
      
      - parameter rotateEncryptionKeyRequest: (body)  
      - parameter apiConfiguration: The configuration for the http request.
@@ -183,8 +224,9 @@ open class EncryptionAPI {
     }
 
     /**
-     Rotate an encryption key
+     Re-seal an encryption key under a new password
      - POST /v1/encryption/keys/rotate
+     - Only the mailbox's own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox's password, which an administrator never has. `mailbox_email`, if sent, must be the caller's own mailbox. The key pair does not change, so every message stays readable.
      - Bearer Token:
        - type: http
        - name: bearerAuth

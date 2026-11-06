@@ -15,6 +15,7 @@ public struct SignupRequest: Sendable, Codable, Hashable {
         case both = "both"
     }
     public static let passwordRule = StringRule(minLength: 12, maxLength: nil, pattern: nil)
+    /** Workspace id. 3 to 63 characters of lowercase a-z, 0-9 and hyphens, starting and ending with a letter or digit. Anything else is refused with 400 Invalid workspace id. */
     public var slug: String
     public var displayName: String?
     public var adminEmail: String

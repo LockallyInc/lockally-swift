@@ -9,12 +9,12 @@ import Foundation
 
 public struct CreateEncryptionKeyRequest: Sendable, Codable, Hashable {
 
-    public var mailboxEmail: String
+    public var mailboxEmail: String?
     public var publicKey: String
     public var encryptedPrivateKey: String
     public var kdfParams: JSONValue?
 
-    public init(mailboxEmail: String, publicKey: String, encryptedPrivateKey: String, kdfParams: JSONValue? = nil) {
+    public init(mailboxEmail: String? = nil, publicKey: String, encryptedPrivateKey: String, kdfParams: JSONValue? = nil) {
         self.mailboxEmail = mailboxEmail
         self.publicKey = publicKey
         self.encryptedPrivateKey = encryptedPrivateKey
@@ -32,7 +32,7 @@ public struct CreateEncryptionKeyRequest: Sendable, Codable, Hashable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(mailboxEmail, forKey: .mailboxEmail)
+        try container.encodeIfPresent(mailboxEmail, forKey: .mailboxEmail)
         try container.encode(publicKey, forKey: .publicKey)
         try container.encode(encryptedPrivateKey, forKey: .encryptedPrivateKey)
         try container.encodeIfPresent(kdfParams, forKey: .kdfParams)

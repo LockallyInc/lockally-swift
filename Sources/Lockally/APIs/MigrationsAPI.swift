@@ -56,9 +56,9 @@ open class MigrationsAPI {
      
      - parameter id: (path)  
      - parameter apiConfiguration: The configuration for the http request.
-     - returns: JSONValue
+     - returns: MigrationDNSCheck
      */
-    open class func checkMigrationDNS(id: UUID, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> JSONValue {
+    open class func checkMigrationDNS(id: UUID, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> MigrationDNSCheck {
         return try await checkMigrationDNSWithRequestBuilder(id: id, apiConfiguration: apiConfiguration).execute().body
     }
 
@@ -70,9 +70,9 @@ open class MigrationsAPI {
        - name: bearerAuth
      - parameter id: (path)  
      - parameter apiConfiguration: The configuration for the http request.
-     - returns: RequestBuilder<JSONValue> 
+     - returns: RequestBuilder<MigrationDNSCheck> 
      */
-    open class func checkMigrationDNSWithRequestBuilder(id: UUID, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<JSONValue> {
+    open class func checkMigrationDNSWithRequestBuilder(id: UUID, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<MigrationDNSCheck> {
         var localVariablePath = "/v1/migrations/{id}/dns-check"
         let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
         let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
@@ -88,7 +88,7 @@ open class MigrationsAPI {
 
         let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
 
-        let localVariableRequestBuilder: RequestBuilder<JSONValue>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
+        let localVariableRequestBuilder: RequestBuilder<MigrationDNSCheck>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
 
         return localVariableRequestBuilder.init(method: "GET", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
     }

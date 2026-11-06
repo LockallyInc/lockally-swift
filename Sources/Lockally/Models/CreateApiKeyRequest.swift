@@ -37,17 +37,21 @@ public struct CreateApiKeyRequest: Sendable, Codable, Hashable {
     public var scopes: [Scopes]
     /** Issue a test key (`lk_test_` prefix). A test key accepts sends, records them and fires a simulated delivery webhook without sending mail, and counts against no limit or allowance.  */
     public var test: Bool? = false
+    /** Optional. When the key stops authenticating. Omit it for a key that does not expire. Must be in the future: an expiry already past would mint a key that fails its first request.  */
+    public var expiresAt: Date?
 
-    public init(label: String, scopes: [Scopes], test: Bool? = false) {
+    public init(label: String, scopes: [Scopes], test: Bool? = false, expiresAt: Date? = nil) {
         self.label = label
         self.scopes = scopes
         self.test = test
+        self.expiresAt = expiresAt
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case label
         case scopes
         case test
+        case expiresAt = "expires_at"
     }
 
     // Encodable protocol methods
@@ -57,6 +61,7 @@ public struct CreateApiKeyRequest: Sendable, Codable, Hashable {
         try container.encode(label, forKey: .label)
         try container.encode(scopes, forKey: .scopes)
         try container.encodeIfPresent(test, forKey: .test)
+        try container.encodeIfPresent(expiresAt, forKey: .expiresAt)
     }
 }
 

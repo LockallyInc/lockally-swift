@@ -9,10 +9,10 @@ import Foundation
 
 public struct CreateEncryptionRecoveryRequest: Sendable, Codable, Hashable {
 
-    public var mailboxEmail: String
+    public var mailboxEmail: String?
     public var recoveryBlob: String
 
-    public init(mailboxEmail: String, recoveryBlob: String) {
+    public init(mailboxEmail: String? = nil, recoveryBlob: String) {
         self.mailboxEmail = mailboxEmail
         self.recoveryBlob = recoveryBlob
     }
@@ -26,7 +26,7 @@ public struct CreateEncryptionRecoveryRequest: Sendable, Codable, Hashable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(mailboxEmail, forKey: .mailboxEmail)
+        try container.encodeIfPresent(mailboxEmail, forKey: .mailboxEmail)
         try container.encode(recoveryBlob, forKey: .recoveryBlob)
     }
 }

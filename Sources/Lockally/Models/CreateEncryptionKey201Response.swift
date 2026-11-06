@@ -12,17 +12,20 @@ public struct CreateEncryptionKey201Response: Sendable, Codable, Hashable {
     public var id: UUID?
     public var mailboxId: UUID?
     public var createdAt: Date?
+    public var replacedOld: Bool?
 
-    public init(id: UUID? = nil, mailboxId: UUID? = nil, createdAt: Date? = nil) {
+    public init(id: UUID? = nil, mailboxId: UUID? = nil, createdAt: Date? = nil, replacedOld: Bool? = nil) {
         self.id = id
         self.mailboxId = mailboxId
         self.createdAt = createdAt
+        self.replacedOld = replacedOld
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case id
         case mailboxId = "mailbox_id"
         case createdAt = "created_at"
+        case replacedOld = "replaced_old"
     }
 
     // Encodable protocol methods
@@ -32,6 +35,7 @@ public struct CreateEncryptionKey201Response: Sendable, Codable, Hashable {
         try container.encodeIfPresent(id, forKey: .id)
         try container.encodeIfPresent(mailboxId, forKey: .mailboxId)
         try container.encodeIfPresent(createdAt, forKey: .createdAt)
+        try container.encodeIfPresent(replacedOld, forKey: .replacedOld)
     }
 }
 

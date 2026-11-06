@@ -100,11 +100,12 @@ open class SendAPI {
      - parameter from: (query) Window start (default 7 days ago). (optional)
      - parameter to: (query) Window end (default now). (optional)
      - parameter domain: (query) Filter by sender domain. (optional)
+     - parameter tag: (query) Group the window by the sender&#39;s own tags: one tag, or a comma-separated set meaning ANY. Case-insensitive. This is the dimension that tells a transactional stream from a notification one. (optional)
      - parameter apiConfiguration: The configuration for the http request.
      - returns: MessageStats
      */
-    open class func getMessageStats(from: Date? = nil, to: Date? = nil, domain: String? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> MessageStats {
-        return try await getMessageStatsWithRequestBuilder(from: from, to: to, domain: domain, apiConfiguration: apiConfiguration).execute().body
+    open class func getMessageStats(from: Date? = nil, to: Date? = nil, domain: String? = nil, tag: String? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> MessageStats {
+        return try await getMessageStatsWithRequestBuilder(from: from, to: to, domain: domain, tag: tag, apiConfiguration: apiConfiguration).execute().body
     }
 
     /**
@@ -117,10 +118,11 @@ open class SendAPI {
      - parameter from: (query) Window start (default 7 days ago). (optional)
      - parameter to: (query) Window end (default now). (optional)
      - parameter domain: (query) Filter by sender domain. (optional)
+     - parameter tag: (query) Group the window by the sender&#39;s own tags: one tag, or a comma-separated set meaning ANY. Case-insensitive. This is the dimension that tells a transactional stream from a notification one. (optional)
      - parameter apiConfiguration: The configuration for the http request.
      - returns: RequestBuilder<MessageStats> 
      */
-    open class func getMessageStatsWithRequestBuilder(from: Date? = nil, to: Date? = nil, domain: String? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<MessageStats> {
+    open class func getMessageStatsWithRequestBuilder(from: Date? = nil, to: Date? = nil, domain: String? = nil, tag: String? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<MessageStats> {
         let localVariablePath = "/v1/messages/stats"
         let localVariableURLString = apiConfiguration.basePath + localVariablePath
         let localVariableParameters: [String: any Sendable]? = nil
@@ -130,6 +132,7 @@ open class SendAPI {
             "from": (wrappedValue: from?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
             "to": (wrappedValue: to?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
             "domain": (wrappedValue: domain?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
+            "tag": (wrappedValue: tag?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
         ])
 
         let localVariableNillableHeaders: [String: (any Sendable)?] = [
@@ -156,19 +159,38 @@ open class SendAPI {
     }
 
     /**
+     * enum for parameter sort
+     */
+    public enum Sort_listMessages: String, Sendable, CaseIterable {
+        case queuedAt = "queued_at"
+        case updatedAt = "updated_at"
+    }
+
+    /**
+     * enum for parameter order
+     */
+    public enum Order_listMessages: String, Sendable, CaseIterable {
+        case asc = "asc"
+        case desc = "desc"
+    }
+
+    /**
      List outbound messages
      
      - parameter status: (query)  (optional)
      - parameter sender: (query) Exact match against the &#x60;from&#x60; mailbox. (optional)
+     - parameter tag: (query) Filter to messages carrying any of these tags. One tag, or a comma-separated set meaning ANY. Case-insensitive: the value is normalised the same way tags are on write. (optional)
      - parameter q: (query) Free-text search across subject + sender. (optional)
      - parameter since: (query) Only messages queued at or after this RFC 3339 instant. (optional)
      - parameter cursor: (query) queued_at of the prior page boundary. Pass back the &#x60;next_cursor&#x60; returned by the previous call. (optional)
      - parameter limit: (query)  (optional, default to 50)
+     - parameter sort: (query) Field to order by. Only indexed columns are offered: an unindexed sort on this table is a full scan of the account&#39;s send history. status and sender are filters instead. (optional, default to .queuedAt)
+     - parameter order: (query) Defaults to desc for the default field and asc for any other. The order is always made total by a tie-break on id, so paging cannot repeat or skip a row that shares a timestamp. cursor encodes queued_at, so combining it with another sort is a 400 rather than a wrong page. (optional)
      - parameter apiConfiguration: The configuration for the http request.
      - returns: ListMessages200Response
      */
-    open class func listMessages(status: Status_listMessages? = nil, sender: String? = nil, q: String? = nil, since: Date? = nil, cursor: String? = nil, limit: Int? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> ListMessages200Response {
-        return try await listMessagesWithRequestBuilder(status: status, sender: sender, q: q, since: since, cursor: cursor, limit: limit, apiConfiguration: apiConfiguration).execute().body
+    open class func listMessages(status: Status_listMessages? = nil, sender: String? = nil, tag: String? = nil, q: String? = nil, since: Date? = nil, cursor: String? = nil, limit: Int? = nil, sort: Sort_listMessages? = nil, order: Order_listMessages? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> ListMessages200Response {
+        return try await listMessagesWithRequestBuilder(status: status, sender: sender, tag: tag, q: q, since: since, cursor: cursor, limit: limit, sort: sort, order: order, apiConfiguration: apiConfiguration).execute().body
     }
 
     /**
@@ -180,14 +202,17 @@ open class SendAPI {
        - name: bearerAuth
      - parameter status: (query)  (optional)
      - parameter sender: (query) Exact match against the &#x60;from&#x60; mailbox. (optional)
+     - parameter tag: (query) Filter to messages carrying any of these tags. One tag, or a comma-separated set meaning ANY. Case-insensitive: the value is normalised the same way tags are on write. (optional)
      - parameter q: (query) Free-text search across subject + sender. (optional)
      - parameter since: (query) Only messages queued at or after this RFC 3339 instant. (optional)
      - parameter cursor: (query) queued_at of the prior page boundary. Pass back the &#x60;next_cursor&#x60; returned by the previous call. (optional)
      - parameter limit: (query)  (optional, default to 50)
+     - parameter sort: (query) Field to order by. Only indexed columns are offered: an unindexed sort on this table is a full scan of the account&#39;s send history. status and sender are filters instead. (optional, default to .queuedAt)
+     - parameter order: (query) Defaults to desc for the default field and asc for any other. The order is always made total by a tie-break on id, so paging cannot repeat or skip a row that shares a timestamp. cursor encodes queued_at, so combining it with another sort is a 400 rather than a wrong page. (optional)
      - parameter apiConfiguration: The configuration for the http request.
      - returns: RequestBuilder<ListMessages200Response> 
      */
-    open class func listMessagesWithRequestBuilder(status: Status_listMessages? = nil, sender: String? = nil, q: String? = nil, since: Date? = nil, cursor: String? = nil, limit: Int? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<ListMessages200Response> {
+    open class func listMessagesWithRequestBuilder(status: Status_listMessages? = nil, sender: String? = nil, tag: String? = nil, q: String? = nil, since: Date? = nil, cursor: String? = nil, limit: Int? = nil, sort: Sort_listMessages? = nil, order: Order_listMessages? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<ListMessages200Response> {
         let localVariablePath = "/v1/messages"
         let localVariableURLString = apiConfiguration.basePath + localVariablePath
         let localVariableParameters: [String: any Sendable]? = nil
@@ -196,10 +221,13 @@ open class SendAPI {
         localVariableUrlComponents?.queryItems = APIHelper.mapValuesToQueryItems([
             "status": (wrappedValue: status?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
             "sender": (wrappedValue: sender?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
+            "tag": (wrappedValue: tag?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
             "q": (wrappedValue: q?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
             "since": (wrappedValue: since?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
             "cursor": (wrappedValue: cursor?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
             "limit": (wrappedValue: limit?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
+            "sort": (wrappedValue: sort?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
+            "order": (wrappedValue: order?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
         ])
 
         let localVariableNillableHeaders: [String: (any Sendable)?] = [

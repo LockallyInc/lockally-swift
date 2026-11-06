@@ -27,8 +27,12 @@ public struct Contact: Sendable, Codable, Hashable {
     public var status: String
     public var createdAt: Date
     public var updatedAt: Date
+    /** The system that owns this contact's external id. Absent on contacts made by hand. */
+    public var externalSystem: String?
+    /** The contact's id in `external_system`. Absent on contacts made by hand. */
+    public var externalId: String?
 
-    public init(id: UUID, tenantId: UUID, name: String, email: String, phone: String? = nil, company: String? = nil, notes: String? = nil, contactType: ContactType, source: String? = nil, department: String? = nil, role: String? = nil, status: String, createdAt: Date, updatedAt: Date) {
+    public init(id: UUID, tenantId: UUID, name: String, email: String, phone: String? = nil, company: String? = nil, notes: String? = nil, contactType: ContactType, source: String? = nil, department: String? = nil, role: String? = nil, status: String, createdAt: Date, updatedAt: Date, externalSystem: String? = nil, externalId: String? = nil) {
         self.id = id
         self.tenantId = tenantId
         self.name = name
@@ -43,6 +47,8 @@ public struct Contact: Sendable, Codable, Hashable {
         self.status = status
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.externalSystem = externalSystem
+        self.externalId = externalId
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
@@ -60,6 +66,8 @@ public struct Contact: Sendable, Codable, Hashable {
         case status
         case createdAt = "created_at"
         case updatedAt = "updated_at"
+        case externalSystem = "external_system"
+        case externalId = "external_id"
     }
 
     // Encodable protocol methods
@@ -80,6 +88,8 @@ public struct Contact: Sendable, Codable, Hashable {
         try container.encode(status, forKey: .status)
         try container.encode(createdAt, forKey: .createdAt)
         try container.encode(updatedAt, forKey: .updatedAt)
+        try container.encodeIfPresent(externalSystem, forKey: .externalSystem)
+        try container.encodeIfPresent(externalId, forKey: .externalId)
     }
 }
 

@@ -50,13 +50,33 @@ open class ApiKeysAPI {
     }
 
     /**
+     * enum for parameter sort
+     */
+    public enum Sort_listApiKeys: String, Sendable, CaseIterable {
+        case label = "label"
+        case createdAt = "created_at"
+        case lastUsedAt = "last_used_at"
+        case expiresAt = "expires_at"
+    }
+
+    /**
+     * enum for parameter order
+     */
+    public enum Order_listApiKeys: String, Sendable, CaseIterable {
+        case asc = "asc"
+        case desc = "desc"
+    }
+
+    /**
      List API keys
      
+     - parameter sort: (query) Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. (optional, default to .createdAt)
+     - parameter order: (query) Defaults to desc for the default field and asc for any other. Always tie-broken on id, so the order is total. (optional)
      - parameter apiConfiguration: The configuration for the http request.
      - returns: ListApiKeys200Response
      */
-    open class func listApiKeys(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> ListApiKeys200Response {
-        return try await listApiKeysWithRequestBuilder(apiConfiguration: apiConfiguration).execute().body
+    open class func listApiKeys(sort: Sort_listApiKeys? = nil, order: Order_listApiKeys? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> ListApiKeys200Response {
+        return try await listApiKeysWithRequestBuilder(sort: sort, order: order, apiConfiguration: apiConfiguration).execute().body
     }
 
     /**
@@ -66,15 +86,21 @@ open class ApiKeysAPI {
      - Bearer Token:
        - type: http
        - name: bearerAuth
+     - parameter sort: (query) Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. (optional, default to .createdAt)
+     - parameter order: (query) Defaults to desc for the default field and asc for any other. Always tie-broken on id, so the order is total. (optional)
      - parameter apiConfiguration: The configuration for the http request.
      - returns: RequestBuilder<ListApiKeys200Response> 
      */
-    open class func listApiKeysWithRequestBuilder(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<ListApiKeys200Response> {
+    open class func listApiKeysWithRequestBuilder(sort: Sort_listApiKeys? = nil, order: Order_listApiKeys? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<ListApiKeys200Response> {
         let localVariablePath = "/v1/api-keys"
         let localVariableURLString = apiConfiguration.basePath + localVariablePath
         let localVariableParameters: [String: any Sendable]? = nil
 
-        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+        var localVariableUrlComponents = URLComponents(string: localVariableURLString)
+        localVariableUrlComponents?.queryItems = APIHelper.mapValuesToQueryItems([
+            "sort": (wrappedValue: sort?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
+            "order": (wrappedValue: order?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
+        ])
 
         let localVariableNillableHeaders: [String: (any Sendable)?] = [
             :
@@ -128,5 +154,95 @@ open class ApiKeysAPI {
         let localVariableRequestBuilder: RequestBuilder<Void>.Type = apiConfiguration.requestBuilderFactory.getNonDecodableBuilder()
 
         return localVariableRequestBuilder.init(method: "DELETE", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
+    }
+
+    /**
+     Rotate an API key
+     
+     - parameter id: (path)  
+     - parameter rotateApiKeyRequest: (body)  (optional)
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: CreateApiKey201Response
+     */
+    open class func rotateApiKey(id: UUID, rotateApiKeyRequest: RotateApiKeyRequest? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> CreateApiKey201Response {
+        return try await rotateApiKeyWithRequestBuilder(id: id, rotateApiKeyRequest: rotateApiKeyRequest, apiConfiguration: apiConfiguration).execute().body
+    }
+
+    /**
+     Rotate an API key
+     - POST /v1/api-keys/{id}/rotate
+     - Issues a successor key and puts a short expiry on this one, so **both work until the overlap ends**. That window is the point: without it, rotation is revocation with extra steps and every caller has to swap credentials in the same instant.  The successor inherits this key's scopes, its label (the label names the integration, and the integration has not changed) and its test flag. Its full `secret` is in this response and nowhere else.  The response's `expires_at` is the **predecessor's** deadline, so you can see from the rotation itself how long you have to cut over.  A key that has already been rotated cannot be rotated again: chaining overlaps would leave several live keys for one integration, which is the opposite of the intent. Rotate the successor instead. 
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter id: (path)  
+     - parameter rotateApiKeyRequest: (body)  (optional)
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: RequestBuilder<CreateApiKey201Response> 
+     */
+    open class func rotateApiKeyWithRequestBuilder(id: UUID, rotateApiKeyRequest: RotateApiKeyRequest? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<CreateApiKey201Response> {
+        var localVariablePath = "/v1/api-keys/{id}/rotate"
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        localVariablePath = localVariablePath.replacingOccurrences(of: "{id}", with: idPostEscape, options: .literal, range: nil)
+        let localVariableURLString = apiConfiguration.basePath + localVariablePath
+        let localVariableParameters = JSONEncodingHelper.encodingParameters(forEncodableObject: rotateApiKeyRequest, codableHelper: apiConfiguration.codableHelper)
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: (any Sendable)?] = [
+            "Content-Type": "application/json",
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<CreateApiKey201Response>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "POST", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
+    }
+
+    /**
+     Update an API key
+     
+     - parameter id: (path)  
+     - parameter updateApiKeyRequest: (body)  
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: APIKey
+     */
+    open class func updateApiKey(id: UUID, updateApiKeyRequest: UpdateApiKeyRequest, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> APIKey {
+        return try await updateApiKeyWithRequestBuilder(id: id, updateApiKeyRequest: updateApiKeyRequest, apiConfiguration: apiConfiguration).execute().body
+    }
+
+    /**
+     Update an API key
+     - PATCH /v1/api-keys/{id}
+     - Changes a key's label, scopes or expiry in place, without reissuing the secret.  **Every field is optional and absent means unchanged.** Renaming a key does not clear its expiry. For `expires_at` there are three distinct requests: omit the field to leave the expiry alone, send a timestamp to set one, and send an explicit `null` to remove one.  Scopes are replaced wholesale, not merged. This endpoint does not restrict which scopes you may grant, because `POST /v1/api-keys` never has either: a key with `tenant:admin` can already mint a key with any scope, so `tenant:admin` is root-equivalent for key management.  A revoked key cannot be updated. 
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter id: (path)  
+     - parameter updateApiKeyRequest: (body)  
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: RequestBuilder<APIKey> 
+     */
+    open class func updateApiKeyWithRequestBuilder(id: UUID, updateApiKeyRequest: UpdateApiKeyRequest, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<APIKey> {
+        var localVariablePath = "/v1/api-keys/{id}"
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        localVariablePath = localVariablePath.replacingOccurrences(of: "{id}", with: idPostEscape, options: .literal, range: nil)
+        let localVariableURLString = apiConfiguration.basePath + localVariablePath
+        let localVariableParameters = JSONEncodingHelper.encodingParameters(forEncodableObject: updateApiKeyRequest, codableHelper: apiConfiguration.codableHelper)
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: (any Sendable)?] = [
+            "Content-Type": "application/json",
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<APIKey>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "PATCH", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
     }
 }

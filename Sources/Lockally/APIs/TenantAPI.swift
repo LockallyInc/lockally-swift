@@ -48,6 +48,44 @@ open class TenantAPI {
     }
 
     /**
+     Get the engagement tracking policy
+     
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: TrackingPolicy
+     */
+    open class func getTrackingPolicy(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> TrackingPolicy {
+        return try await getTrackingPolicyWithRequestBuilder(apiConfiguration: apiConfiguration).execute().body
+    }
+
+    /**
+     Get the engagement tracking policy
+     - GET /v1/tracking
+     - Whether open and click tracking are enabled for this account. **Both are off until switched on**, and an account that has never set a policy reads as off rather than as an error.  `configured` reports whether this deployment holds a signing secret. Without one no tracking token can be minted or verified, so tracking cannot work however the flags are set, and a caller seeing `track_opens: true` with nothing arriving deserves to know why. 
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: RequestBuilder<TrackingPolicy> 
+     */
+    open class func getTrackingPolicyWithRequestBuilder(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<TrackingPolicy> {
+        let localVariablePath = "/v1/tracking"
+        let localVariableURLString = apiConfiguration.basePath + localVariablePath
+        let localVariableParameters: [String: any Sendable]? = nil
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: (any Sendable)?] = [
+            :
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<TrackingPolicy>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "GET", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
+    }
+
+    /**
      Usage snapshot
      
      - parameter apiConfiguration: The configuration for the http request.
@@ -83,5 +121,45 @@ open class TenantAPI {
         let localVariableRequestBuilder: RequestBuilder<GetUsage200Response>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
 
         return localVariableRequestBuilder.init(method: "GET", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
+    }
+
+    /**
+     Update the engagement tracking policy
+     
+     - parameter updateTrackingPolicyRequest: (body)  
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: TrackingPolicy
+     */
+    open class func updateTrackingPolicy(updateTrackingPolicyRequest: UpdateTrackingPolicyRequest, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> TrackingPolicy {
+        return try await updateTrackingPolicyWithRequestBuilder(updateTrackingPolicyRequest: updateTrackingPolicyRequest, apiConfiguration: apiConfiguration).execute().body
+    }
+
+    /**
+     Update the engagement tracking policy
+     - PUT /v1/tracking
+     - Enables or disables tracking for the account. Send either flag or both; an omitted flag is left unchanged rather than reset.  **Enabling this changes what Lockally collects about your recipients**, who have no relationship with us. You are the controller for them. What is collected is a user-agent string, a timestamp, and for a click the destination URL: **no IP address**, ever. The change is written to your audit log. 
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter updateTrackingPolicyRequest: (body)  
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: RequestBuilder<TrackingPolicy> 
+     */
+    open class func updateTrackingPolicyWithRequestBuilder(updateTrackingPolicyRequest: UpdateTrackingPolicyRequest, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<TrackingPolicy> {
+        let localVariablePath = "/v1/tracking"
+        let localVariableURLString = apiConfiguration.basePath + localVariablePath
+        let localVariableParameters = JSONEncodingHelper.encodingParameters(forEncodableObject: updateTrackingPolicyRequest, codableHelper: apiConfiguration.codableHelper)
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: (any Sendable)?] = [
+            "Content-Type": "application/json",
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<TrackingPolicy>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "PUT", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
     }
 }

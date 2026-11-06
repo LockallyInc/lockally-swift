@@ -10,6 +10,51 @@ import Foundation
 open class ContactsAPI {
 
     /**
+     Create or update up to 500 contacts by their ids in another system
+     
+     - parameter system: (path)  
+     - parameter bulkUpsertExternalContactsRequest: (body)  
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: BulkUpsertExternalContacts200Response
+     */
+    open class func bulkUpsertExternalContacts(system: String, bulkUpsertExternalContactsRequest: BulkUpsertExternalContactsRequest, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> BulkUpsertExternalContacts200Response {
+        return try await bulkUpsertExternalContactsWithRequestBuilder(system: system, bulkUpsertExternalContactsRequest: bulkUpsertExternalContactsRequest, apiConfiguration: apiConfiguration).execute().body
+    }
+
+    /**
+     Create or update up to 500 contacts by their ids in another system
+     - PUT /v1/contacts/external/{system}
+     - For a sync. Each row stands alone: a bad row is reported in `results` with its index and the rest are stored, so the response is 200 whenever the request itself is well formed. Read `failed` and `results`. Two rows with the same `external_id` in one request are refused (the later one), because which is current cannot be known. Rerunning the same payload updates rather than duplicates.
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter system: (path)  
+     - parameter bulkUpsertExternalContactsRequest: (body)  
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: RequestBuilder<BulkUpsertExternalContacts200Response> 
+     */
+    open class func bulkUpsertExternalContactsWithRequestBuilder(system: String, bulkUpsertExternalContactsRequest: BulkUpsertExternalContactsRequest, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<BulkUpsertExternalContacts200Response> {
+        var localVariablePath = "/v1/contacts/external/{system}"
+        let systemPreEscape = "\(APIHelper.mapValueToPathItem(system))"
+        let systemPostEscape = systemPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        localVariablePath = localVariablePath.replacingOccurrences(of: "{system}", with: systemPostEscape, options: .literal, range: nil)
+        let localVariableURLString = apiConfiguration.basePath + localVariablePath
+        let localVariableParameters = JSONEncodingHelper.encodingParameters(forEncodableObject: bulkUpsertExternalContactsRequest, codableHelper: apiConfiguration.codableHelper)
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: (any Sendable)?] = [
+            "Content-Type": "application/json",
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<BulkUpsertExternalContacts200Response>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "PUT", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
+    }
+
+    /**
      Create a contact
      
      - parameter createContactRequest: (body)  
@@ -74,6 +119,53 @@ open class ContactsAPI {
         let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
         let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         localVariablePath = localVariablePath.replacingOccurrences(of: "{id}", with: idPostEscape, options: .literal, range: nil)
+        let localVariableURLString = apiConfiguration.basePath + localVariablePath
+        let localVariableParameters: [String: any Sendable]? = nil
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: (any Sendable)?] = [
+            :
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<Void>.Type = apiConfiguration.requestBuilderFactory.getNonDecodableBuilder()
+
+        return localVariableRequestBuilder.init(method: "DELETE", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
+    }
+
+    /**
+     Delete a contact by its id in another system
+     
+     - parameter system: (path) Your label for the system the record comes from, for example &#x60;salesforce&#x60;, &#x60;hubspot&#x60; or &#x60;odoo&#x60;. 1 to 64 characters: lowercase letters, digits, dot, underscore or hyphen (upper case is folded). 
+     - parameter externalId: (path) The record&#39;s id in that system, kept exactly as given (case matters). 1 to 255 characters, no spaces. URL-encode it. 
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: Void
+     */
+    open class func deleteExternalContact(system: String, externalId: String, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) {
+        return try await deleteExternalContactWithRequestBuilder(system: system, externalId: externalId, apiConfiguration: apiConfiguration).execute().body
+    }
+
+    /**
+     Delete a contact by its id in another system
+     - DELETE /v1/contacts/external/{system}/{external_id}
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter system: (path) Your label for the system the record comes from, for example &#x60;salesforce&#x60;, &#x60;hubspot&#x60; or &#x60;odoo&#x60;. 1 to 64 characters: lowercase letters, digits, dot, underscore or hyphen (upper case is folded). 
+     - parameter externalId: (path) The record&#39;s id in that system, kept exactly as given (case matters). 1 to 255 characters, no spaces. URL-encode it. 
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: RequestBuilder<Void> 
+     */
+    open class func deleteExternalContactWithRequestBuilder(system: String, externalId: String, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<Void> {
+        var localVariablePath = "/v1/contacts/external/{system}/{external_id}"
+        let systemPreEscape = "\(APIHelper.mapValueToPathItem(system))"
+        let systemPostEscape = systemPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        localVariablePath = localVariablePath.replacingOccurrences(of: "{system}", with: systemPostEscape, options: .literal, range: nil)
+        let externalIdPreEscape = "\(APIHelper.mapValueToPathItem(externalId))"
+        let externalIdPostEscape = externalIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        localVariablePath = localVariablePath.replacingOccurrences(of: "{external_id}", with: externalIdPostEscape, options: .literal, range: nil)
         let localVariableURLString = apiConfiguration.basePath + localVariablePath
         let localVariableParameters: [String: any Sendable]? = nil
 
@@ -175,6 +267,53 @@ open class ContactsAPI {
     }
 
     /**
+     Get a contact by its id in another system
+     
+     - parameter system: (path) Your label for the system the record comes from, for example &#x60;salesforce&#x60;, &#x60;hubspot&#x60; or &#x60;odoo&#x60;. 1 to 64 characters: lowercase letters, digits, dot, underscore or hyphen (upper case is folded). 
+     - parameter externalId: (path) The record&#39;s id in that system, kept exactly as given (case matters). 1 to 255 characters, no spaces. URL-encode it. 
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: Contact
+     */
+    open class func getExternalContact(system: String, externalId: String, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> Contact {
+        return try await getExternalContactWithRequestBuilder(system: system, externalId: externalId, apiConfiguration: apiConfiguration).execute().body
+    }
+
+    /**
+     Get a contact by its id in another system
+     - GET /v1/contacts/external/{system}/{external_id}
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter system: (path) Your label for the system the record comes from, for example &#x60;salesforce&#x60;, &#x60;hubspot&#x60; or &#x60;odoo&#x60;. 1 to 64 characters: lowercase letters, digits, dot, underscore or hyphen (upper case is folded). 
+     - parameter externalId: (path) The record&#39;s id in that system, kept exactly as given (case matters). 1 to 255 characters, no spaces. URL-encode it. 
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: RequestBuilder<Contact> 
+     */
+    open class func getExternalContactWithRequestBuilder(system: String, externalId: String, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<Contact> {
+        var localVariablePath = "/v1/contacts/external/{system}/{external_id}"
+        let systemPreEscape = "\(APIHelper.mapValueToPathItem(system))"
+        let systemPostEscape = systemPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        localVariablePath = localVariablePath.replacingOccurrences(of: "{system}", with: systemPostEscape, options: .literal, range: nil)
+        let externalIdPreEscape = "\(APIHelper.mapValueToPathItem(externalId))"
+        let externalIdPostEscape = externalIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        localVariablePath = localVariablePath.replacingOccurrences(of: "{external_id}", with: externalIdPostEscape, options: .literal, range: nil)
+        let localVariableURLString = apiConfiguration.basePath + localVariablePath
+        let localVariableParameters: [String: any Sendable]? = nil
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: (any Sendable)?] = [
+            :
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<Contact>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "GET", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
+    }
+
+    /**
      List contacts
      
      - parameter q: (query) Free-text search across name, email, company (optional)
@@ -270,5 +409,55 @@ open class ContactsAPI {
         let localVariableRequestBuilder: RequestBuilder<Contact>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
 
         return localVariableRequestBuilder.init(method: "PATCH", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
+    }
+
+    /**
+     Create or update a contact by its id in another system
+     
+     - parameter system: (path) Your label for the system the record comes from, for example &#x60;salesforce&#x60;, &#x60;hubspot&#x60; or &#x60;odoo&#x60;. 1 to 64 characters: lowercase letters, digits, dot, underscore or hyphen (upper case is folded). 
+     - parameter externalId: (path) The record&#39;s id in that system, kept exactly as given (case matters). 1 to 255 characters, no spaces. URL-encode it. 
+     - parameter externalContactInput: (body)  
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: Contact
+     */
+    open class func upsertExternalContact(system: String, externalId: String, externalContactInput: ExternalContactInput, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> Contact {
+        return try await upsertExternalContactWithRequestBuilder(system: system, externalId: externalId, externalContactInput: externalContactInput, apiConfiguration: apiConfiguration).execute().body
+    }
+
+    /**
+     Create or update a contact by its id in another system
+     - PUT /v1/contacts/external/{system}/{external_id}
+     - Idempotent: the path is the identity, so sending the same request twice cannot create a second contact, and you never need to store our id. Returns 201 when the contact was created and 200 when it already existed. The body is the full representation: a field you leave out is cleared. Email is an ordinary attribute, not a key, so changing it updates the same contact. `mailboxes:write` is also accepted.
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter system: (path) Your label for the system the record comes from, for example &#x60;salesforce&#x60;, &#x60;hubspot&#x60; or &#x60;odoo&#x60;. 1 to 64 characters: lowercase letters, digits, dot, underscore or hyphen (upper case is folded). 
+     - parameter externalId: (path) The record&#39;s id in that system, kept exactly as given (case matters). 1 to 255 characters, no spaces. URL-encode it. 
+     - parameter externalContactInput: (body)  
+     - parameter apiConfiguration: The configuration for the http request.
+     - returns: RequestBuilder<Contact> 
+     */
+    open class func upsertExternalContactWithRequestBuilder(system: String, externalId: String, externalContactInput: ExternalContactInput, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<Contact> {
+        var localVariablePath = "/v1/contacts/external/{system}/{external_id}"
+        let systemPreEscape = "\(APIHelper.mapValueToPathItem(system))"
+        let systemPostEscape = systemPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        localVariablePath = localVariablePath.replacingOccurrences(of: "{system}", with: systemPostEscape, options: .literal, range: nil)
+        let externalIdPreEscape = "\(APIHelper.mapValueToPathItem(externalId))"
+        let externalIdPostEscape = externalIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        localVariablePath = localVariablePath.replacingOccurrences(of: "{external_id}", with: externalIdPostEscape, options: .literal, range: nil)
+        let localVariableURLString = apiConfiguration.basePath + localVariablePath
+        let localVariableParameters = JSONEncodingHelper.encodingParameters(forEncodableObject: externalContactInput, codableHelper: apiConfiguration.codableHelper)
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: (any Sendable)?] = [
+            "Content-Type": "application/json",
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<Contact>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "PUT", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
     }
 }

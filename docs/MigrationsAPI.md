@@ -77,7 +77,7 @@ Name | Type | Description  | Notes
 
 # **checkMigrationDNS**
 ```swift
-    open class func checkMigrationDNS(id: UUID, completion: @escaping (_ data: JSONValue?, _ error: Error?) -> Void)
+    open class func checkMigrationDNS(id: UUID, completion: @escaping (_ data: MigrationDNSCheck?, _ error: Error?) -> Void)
 ```
 
 Check DNS readiness for cutover
@@ -110,7 +110,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-**JSONValue**
+[**MigrationDNSCheck**](MigrationDNSCheck.md)
 
 ### Authorization
 

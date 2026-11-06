@@ -198,9 +198,9 @@ open class DashboardAPI {
      Full tenant health report
      
      - parameter apiConfiguration: The configuration for the http request.
-     - returns: JSONValue
+     - returns: TenantHealthReport
      */
-    open class func getTenantHealth(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> JSONValue {
+    open class func getTenantHealth(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> TenantHealthReport {
         return try await getTenantHealthWithRequestBuilder(apiConfiguration: apiConfiguration).execute().body
     }
 
@@ -211,9 +211,9 @@ open class DashboardAPI {
        - type: http
        - name: bearerAuth
      - parameter apiConfiguration: The configuration for the http request.
-     - returns: RequestBuilder<JSONValue> 
+     - returns: RequestBuilder<TenantHealthReport> 
      */
-    open class func getTenantHealthWithRequestBuilder(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<JSONValue> {
+    open class func getTenantHealthWithRequestBuilder(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<TenantHealthReport> {
         let localVariablePath = "/v1/health"
         let localVariableURLString = apiConfiguration.basePath + localVariablePath
         let localVariableParameters: [String: any Sendable]? = nil
@@ -226,7 +226,7 @@ open class DashboardAPI {
 
         let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
 
-        let localVariableRequestBuilder: RequestBuilder<JSONValue>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
+        let localVariableRequestBuilder: RequestBuilder<TenantHealthReport>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
 
         return localVariableRequestBuilder.init(method: "GET", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
     }

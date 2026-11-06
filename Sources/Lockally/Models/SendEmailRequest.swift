@@ -10,6 +10,7 @@ import Foundation
 public struct SendEmailRequest: Sendable, Codable, Hashable {
 
     public static let toRule = ArrayRule(minItems: 1, maxItems: nil, uniqueItems: false)
+    public static let tagsRule = ArrayRule(minItems: nil, maxItems: 10, uniqueItems: false)
     public var from: String
     public var to: [String]
     public var cc: [String]?
@@ -32,9 +33,17 @@ public struct SendEmailRequest: Sendable, Codable, Hashable {
     public var variables: [String: String]?
     /** Schedule delivery for a future RFC3339 time (≤ 30 days out). Omit or past = send now. Cancel with DELETE /v1/messages/{id} while scheduled. */
     public var sendAt: Date?
+    /** Arbitrary key/value you attach to this message and get back on every delivery webhook for it, so a send can be matched to your own records without a lookup table.  **It never leaves Lockally.** A custom entry in `headers` goes out on the wire to the recipient, which is why that is not a substitute: order ids and internal identifiers do not belong in a header the recipient can read.  At most 20 keys, keys at most 64 characters, values at most 512. **Over a limit is refused with a `400`, never truncated**: a silently shortened order id succeeds and then fails to match weeks later.  Not indexed and not filterable.  */
+    public var metadata: [String: String]?
+    /** Labels that group this send for filtering and analytics: campaign, template, environment.  **Lowercased, trimmed and deduplicated on write**, so the grouping does not depend on every caller spelling them identically. `Campaign-X` is stored as `campaign-x`, and either spelling matches it in a filter.  At most 10 per message after deduplication, each at most 32 characters. Over either is a `400` rather than a trimmed list: a send missing the tag it was tagged for is worse than a refusal.  Unlike `metadata`, tags ARE queryable: filter with `GET /v1/messages?tag=` and group with `GET /v1/messages/stats?tag=`.  */
+    public var tags: [String]?
+    /** Override the account's open-tracking setting for this one send. Omit to inherit it.  Three states matter here: `true`, `false`, and absent. A transactional receipt can set `false` without the account turning tracking off for its marketing.  */
+    public var trackOpens: Bool?
+    /** As `track_opens`, for click tracking. Click tracking rewrites `http(s)` links in the **HTML** part only: the plain-text part is never rewritten, because a visible redirect URL is what recipients complain about. A text-only send is therefore not click-tracked.  */
+    public var trackClicks: Bool?
     public var attachments: [SendEmailRequestAttachmentsInner]?
 
-    public init(from: String, to: [String], cc: [String]? = nil, bcc: [String]? = nil, subject: String? = nil, text: String? = nil, html: String? = nil, headers: [String: String]? = nil, replyTo: String? = nil, replyToName: String? = nil, unsubscribe: Bool? = nil, templateId: UUID? = nil, variables: [String: String]? = nil, sendAt: Date? = nil, attachments: [SendEmailRequestAttachmentsInner]? = nil) {
+    public init(from: String, to: [String], cc: [String]? = nil, bcc: [String]? = nil, subject: String? = nil, text: String? = nil, html: String? = nil, headers: [String: String]? = nil, replyTo: String? = nil, replyToName: String? = nil, unsubscribe: Bool? = nil, templateId: UUID? = nil, variables: [String: String]? = nil, sendAt: Date? = nil, metadata: [String: String]? = nil, tags: [String]? = nil, trackOpens: Bool? = nil, trackClicks: Bool? = nil, attachments: [SendEmailRequestAttachmentsInner]? = nil) {
         self.from = from
         self.to = to
         self.cc = cc
@@ -49,6 +58,10 @@ public struct SendEmailRequest: Sendable, Codable, Hashable {
         self.templateId = templateId
         self.variables = variables
         self.sendAt = sendAt
+        self.metadata = metadata
+        self.tags = tags
+        self.trackOpens = trackOpens
+        self.trackClicks = trackClicks
         self.attachments = attachments
     }
 
@@ -67,6 +80,10 @@ public struct SendEmailRequest: Sendable, Codable, Hashable {
         case templateId = "template_id"
         case variables
         case sendAt = "send_at"
+        case metadata
+        case tags
+        case trackOpens = "track_opens"
+        case trackClicks = "track_clicks"
         case attachments
     }
 
@@ -88,6 +105,10 @@ public struct SendEmailRequest: Sendable, Codable, Hashable {
         try container.encodeIfPresent(templateId, forKey: .templateId)
         try container.encodeIfPresent(variables, forKey: .variables)
         try container.encodeIfPresent(sendAt, forKey: .sendAt)
+        try container.encodeIfPresent(metadata, forKey: .metadata)
+        try container.encodeIfPresent(tags, forKey: .tags)
+        try container.encodeIfPresent(trackOpens, forKey: .trackOpens)
+        try container.encodeIfPresent(trackClicks, forKey: .trackClicks)
         try container.encodeIfPresent(attachments, forKey: .attachments)
     }
 }

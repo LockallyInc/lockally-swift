@@ -8,7 +8,8 @@ Method | HTTP request | Description
 [**createEncryptionKey**](EncryptionAPI.md#createencryptionkey) | **POST** /v1/encryption/keys | Upload an encryption key pair
 [**createEncryptionRecovery**](EncryptionAPI.md#createencryptionrecovery) | **POST** /v1/encryption/recovery | Store an encryption recovery blob
 [**getEncryptionKey**](EncryptionAPI.md#getencryptionkey) | **GET** /v1/encryption/keys/{email} | Get encryption key for a mailbox
-[**rotateEncryptionKey**](EncryptionAPI.md#rotateencryptionkey) | **POST** /v1/encryption/keys/rotate | Rotate an encryption key
+[**getEncryptionStatus**](EncryptionAPI.md#getencryptionstatus) | **GET** /v1/encryption/status | End-to-end encryption status for the workspace
+[**rotateEncryptionKey**](EncryptionAPI.md#rotateencryptionkey) | **POST** /v1/encryption/keys/rotate | Re-seal an encryption key under a new password
 
 
 # **batchLookupPublicKeys**
@@ -66,6 +67,8 @@ Name | Type | Description  | Notes
 
 Upload an encryption key pair
 
+Only the mailbox's own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox's password, which an administrator never has. `mailbox_email`, if sent, must be the caller's own mailbox. A mailbox that already has a key is starting over: the old key is kept inactive, not destroyed, and the new one starts without a recovery code.
+
 ### Example
 ```swift
 // The following code samples are still beta. For any issue, please report via http://github.com/OpenAPITools/openapi-generator/issues/new
@@ -113,6 +116,8 @@ Name | Type | Description  | Notes
 ```
 
 Store an encryption recovery blob
+
+Only the mailbox's own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox's password, which an administrator never has. `mailbox_email`, if sent, must be the caller's own mailbox. The blob is the private key sealed under a recovery code the browser generated; the code itself is never sent. Replaces any earlier one.
 
 ### Example
 ```swift
@@ -162,6 +167,8 @@ Void (empty response body)
 
 Get encryption key for a mailbox
 
+Anyone in the workspace gets the public key. The mailbox's own webmail session also gets its sealed private key, its sealed recovery copy and the recovery state.
+
 ### Example
 ```swift
 // The following code samples are still beta. For any issue, please report via http://github.com/OpenAPITools/openapi-generator/issues/new
@@ -203,12 +210,60 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **getEncryptionStatus**
+```swift
+    open class func getEncryptionStatus(completion: @escaping (_ data: GetEncryptionStatus200Response?, _ error: Error?) -> Void)
+```
+
+End-to-end encryption status for the workspace
+
+For administrators: whether the add-on is on, and for each mailbox whether it has a key and a recovery code. Carries no key material.
+
+### Example
+```swift
+// The following code samples are still beta. For any issue, please report via http://github.com/OpenAPITools/openapi-generator/issues/new
+import Lockally
+
+
+// End-to-end encryption status for the workspace
+EncryptionAPI.getEncryptionStatus() { (response, error) in
+    guard error == nil else {
+        print(error)
+        return
+    }
+
+    if (response) {
+        dump(response)
+    }
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**GetEncryptionStatus200Response**](GetEncryptionStatus200Response.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json, application/problem+json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **rotateEncryptionKey**
 ```swift
     open class func rotateEncryptionKey(rotateEncryptionKeyRequest: RotateEncryptionKeyRequest, completion: @escaping (_ data: Void?, _ error: Error?) -> Void)
 ```
 
-Rotate an encryption key
+Re-seal an encryption key under a new password
+
+Only the mailbox's own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox's password, which an administrator never has. `mailbox_email`, if sent, must be the caller's own mailbox. The key pair does not change, so every message stays readable.
 
 ### Example
 ```swift
@@ -217,7 +272,7 @@ import Lockally
 
 let rotateEncryptionKeyRequest = rotateEncryptionKey_request(mailboxEmail: "mailboxEmail_example", encryptedPrivateKey: "encryptedPrivateKey_example", kdfParams: 123) // RotateEncryptionKeyRequest | 
 
-// Rotate an encryption key
+// Re-seal an encryption key under a new password
 EncryptionAPI.rotateEncryptionKey(rotateEncryptionKeyRequest: rotateEncryptionKeyRequest) { (response, error) in
     guard error == nil else {
         print(error)

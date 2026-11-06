@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name        = 'Lockally'
-  s.version     = '0.3.3'
+  s.version     = '0.4.0'
   s.summary     = 'Official Lockally SDK for iOS — transactional email, contacts, and agent inboxes.'
   s.homepage    = 'https://lockally.com'
   s.license     = { :type => 'MIT', :file => 'LICENSE' }

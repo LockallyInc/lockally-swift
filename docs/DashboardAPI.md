@@ -235,7 +235,7 @@ This endpoint does not need any parameter.
 
 # **getTenantHealth**
 ```swift
-    open class func getTenantHealth(completion: @escaping (_ data: JSONValue?, _ error: Error?) -> Void)
+    open class func getTenantHealth(completion: @escaping (_ data: TenantHealthReport?, _ error: Error?) -> Void)
 ```
 
 Full tenant health report
@@ -264,7 +264,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-**JSONValue**
+[**TenantHealthReport**](TenantHealthReport.md)
 
 ### Authorization
 

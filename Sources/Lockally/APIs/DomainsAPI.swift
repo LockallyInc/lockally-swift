@@ -264,13 +264,32 @@ open class DomainsAPI {
     }
 
     /**
+     * enum for parameter sort
+     */
+    public enum Sort_listDomains: String, Sendable, CaseIterable {
+        case domain = "domain"
+        case createdAt = "created_at"
+        case verifiedAt = "verified_at"
+    }
+
+    /**
+     * enum for parameter order
+     */
+    public enum Order_listDomains: String, Sendable, CaseIterable {
+        case asc = "asc"
+        case desc = "desc"
+    }
+
+    /**
      List domains
      
+     - parameter sort: (query) Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. (optional, default to .createdAt)
+     - parameter order: (query) Defaults to desc for the default field and asc for any other. Always tie-broken on id, so the order is total. (optional)
      - parameter apiConfiguration: The configuration for the http request.
      - returns: ListDomains200Response
      */
-    open class func listDomains(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> ListDomains200Response {
-        return try await listDomainsWithRequestBuilder(apiConfiguration: apiConfiguration).execute().body
+    open class func listDomains(sort: Sort_listDomains? = nil, order: Order_listDomains? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> ListDomains200Response {
+        return try await listDomainsWithRequestBuilder(sort: sort, order: order, apiConfiguration: apiConfiguration).execute().body
     }
 
     /**
@@ -280,15 +299,21 @@ open class DomainsAPI {
      - Bearer Token:
        - type: http
        - name: bearerAuth
+     - parameter sort: (query) Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. (optional, default to .createdAt)
+     - parameter order: (query) Defaults to desc for the default field and asc for any other. Always tie-broken on id, so the order is total. (optional)
      - parameter apiConfiguration: The configuration for the http request.
      - returns: RequestBuilder<ListDomains200Response> 
      */
-    open class func listDomainsWithRequestBuilder(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<ListDomains200Response> {
+    open class func listDomainsWithRequestBuilder(sort: Sort_listDomains? = nil, order: Order_listDomains? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<ListDomains200Response> {
         let localVariablePath = "/v1/domains"
         let localVariableURLString = apiConfiguration.basePath + localVariablePath
         let localVariableParameters: [String: any Sendable]? = nil
 
-        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+        var localVariableUrlComponents = URLComponents(string: localVariableURLString)
+        localVariableUrlComponents?.queryItems = APIHelper.mapValuesToQueryItems([
+            "sort": (wrappedValue: sort?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
+            "order": (wrappedValue: order?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
+        ])
 
         let localVariableNillableHeaders: [String: (any Sendable)?] = [
             :

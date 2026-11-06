@@ -133,13 +133,32 @@ open class TemplatesAPI {
     }
 
     /**
+     * enum for parameter sort
+     */
+    public enum Sort_listTemplates: String, Sendable, CaseIterable {
+        case name = "name"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+
+    /**
+     * enum for parameter order
+     */
+    public enum Order_listTemplates: String, Sendable, CaseIterable {
+        case asc = "asc"
+        case desc = "desc"
+    }
+
+    /**
      List templates
      
+     - parameter sort: (query) Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. (optional, default to .name)
+     - parameter order: (query) Defaults to asc for the default field and asc for any other. Always tie-broken on id, so the order is total. (optional)
      - parameter apiConfiguration: The configuration for the http request.
      - returns: ListTemplates200Response
      */
-    open class func listTemplates(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> ListTemplates200Response {
-        return try await listTemplatesWithRequestBuilder(apiConfiguration: apiConfiguration).execute().body
+    open class func listTemplates(sort: Sort_listTemplates? = nil, order: Order_listTemplates? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> ListTemplates200Response {
+        return try await listTemplatesWithRequestBuilder(sort: sort, order: order, apiConfiguration: apiConfiguration).execute().body
     }
 
     /**
@@ -148,15 +167,21 @@ open class TemplatesAPI {
      - Bearer Token:
        - type: http
        - name: bearerAuth
+     - parameter sort: (query) Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. (optional, default to .name)
+     - parameter order: (query) Defaults to asc for the default field and asc for any other. Always tie-broken on id, so the order is total. (optional)
      - parameter apiConfiguration: The configuration for the http request.
      - returns: RequestBuilder<ListTemplates200Response> 
      */
-    open class func listTemplatesWithRequestBuilder(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<ListTemplates200Response> {
+    open class func listTemplatesWithRequestBuilder(sort: Sort_listTemplates? = nil, order: Order_listTemplates? = nil, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<ListTemplates200Response> {
         let localVariablePath = "/v1/templates"
         let localVariableURLString = apiConfiguration.basePath + localVariablePath
         let localVariableParameters: [String: any Sendable]? = nil
 
-        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+        var localVariableUrlComponents = URLComponents(string: localVariableURLString)
+        localVariableUrlComponents?.queryItems = APIHelper.mapValuesToQueryItems([
+            "sort": (wrappedValue: sort?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
+            "order": (wrappedValue: order?.asParameter(codableHelper: apiConfiguration.codableHelper), isExplode: true),
+        ])
 
         let localVariableNillableHeaders: [String: (any Sendable)?] = [
             :

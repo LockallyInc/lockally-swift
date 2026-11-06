@@ -18,10 +18,16 @@ public struct CreateApiKey201Response: Sendable, Codable, Hashable {
     public var lastUsedAt: Date?
     public var revokedAt: Date?
     public var createdAt: Date
+    /** True for an lk_test_* key: the whole request path runs but a send never reaches the mail server and nothing counts against the account. */
+    public var test: Bool?
+    /** When the key stops authenticating. Null means it does not expire, which is how every key behaved before expiry existed. Enforced at authentication, so the key fails the first request after this moment rather than whenever a sweep runs.  */
+    public var expiresAt: Date?
+    /** The successor issued by `POST /v1/api-keys/{id}/rotate`. Set on the PREDECESSOR, so you can see which key replaced this one while both still work through the overlap window.  */
+    public var rotatedTo: UUID?
     /** The full `lk_live_<prefix>_<secret>` token. Shown ONCE. */
     public var secret: String
 
-    public init(id: UUID, tenantId: UUID, _prefix: String, scopes: [String], label: String, lastUsedAt: Date? = nil, revokedAt: Date? = nil, createdAt: Date, secret: String) {
+    public init(id: UUID, tenantId: UUID, _prefix: String, scopes: [String], label: String, lastUsedAt: Date? = nil, revokedAt: Date? = nil, createdAt: Date, test: Bool? = nil, expiresAt: Date? = nil, rotatedTo: UUID? = nil, secret: String) {
         self.id = id
         self.tenantId = tenantId
         self._prefix = _prefix
@@ -30,6 +36,9 @@ public struct CreateApiKey201Response: Sendable, Codable, Hashable {
         self.lastUsedAt = lastUsedAt
         self.revokedAt = revokedAt
         self.createdAt = createdAt
+        self.test = test
+        self.expiresAt = expiresAt
+        self.rotatedTo = rotatedTo
         self.secret = secret
     }
 
@@ -42,6 +51,9 @@ public struct CreateApiKey201Response: Sendable, Codable, Hashable {
         case lastUsedAt = "last_used_at"
         case revokedAt = "revoked_at"
         case createdAt = "created_at"
+        case test
+        case expiresAt = "expires_at"
+        case rotatedTo = "rotated_to"
         case secret
     }
 
@@ -57,6 +69,9 @@ public struct CreateApiKey201Response: Sendable, Codable, Hashable {
         try container.encodeIfPresent(lastUsedAt, forKey: .lastUsedAt)
         try container.encodeIfPresent(revokedAt, forKey: .revokedAt)
         try container.encode(createdAt, forKey: .createdAt)
+        try container.encodeIfPresent(test, forKey: .test)
+        try container.encodeIfPresent(expiresAt, forKey: .expiresAt)
+        try container.encodeIfPresent(rotatedTo, forKey: .rotatedTo)
         try container.encode(secret, forKey: .secret)
     }
 }

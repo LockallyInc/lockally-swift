@@ -14,6 +14,8 @@ Name | Type | Description | Notes
 **updatedAt** | **Date** |  | 
 **bounceReason** | **String** |  | [optional] 
 **sizeBytes** | **Int** |  | [optional] 
+**metadata** | **[String: String]** | The sender&#39;s own key/value from the send request. Always present; &#x60;{}&#x60; when none was set. | [optional] 
+**tags** | **[String]** | Grouping labels, lowercased and deduplicated. Always present; &#x60;[]&#x60; when none were set. | [optional] 
 **from** | **String** |  | [optional] 
 **to** | **[String]** |  | [optional] 
 **cc** | **[String]** |  | [optional] 

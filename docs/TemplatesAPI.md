@@ -157,7 +157,7 @@ Name | Type | Description  | Notes
 
 # **listTemplates**
 ```swift
-    open class func listTemplates(completion: @escaping (_ data: ListTemplates200Response?, _ error: Error?) -> Void)
+    open class func listTemplates(sort: Sort_listTemplates? = nil, order: Order_listTemplates? = nil, completion: @escaping (_ data: ListTemplates200Response?, _ error: Error?) -> Void)
 ```
 
 List templates
@@ -167,9 +167,11 @@ List templates
 // The following code samples are still beta. For any issue, please report via http://github.com/OpenAPITools/openapi-generator/issues/new
 import Lockally
 
+let sort = "sort_example" // String | Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. (optional) (default to .name)
+let order = "order_example" // String | Defaults to asc for the default field and asc for any other. Always tie-broken on id, so the order is total. (optional)
 
 // List templates
-TemplatesAPI.listTemplates() { (response, error) in
+TemplatesAPI.listTemplates(sort: sort, order: order) { (response, error) in
     guard error == nil else {
         print(error)
         return
@@ -182,7 +184,11 @@ TemplatesAPI.listTemplates() { (response, error) in
 ```
 
 ### Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **sort** | **String** | Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. | [optional] [default to .name]
+ **order** | **String** | Defaults to asc for the default field and asc for any other. Always tie-broken on id, so the order is total. | [optional] 
 
 ### Return type
 

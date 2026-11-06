@@ -30,6 +30,10 @@ public struct MessageDetail: Sendable, Codable, Hashable {
     public var updatedAt: Date
     public var bounceReason: String?
     public var sizeBytes: Int?
+    /** The sender's own key/value from the send request. Always present; `{}` when none was set. */
+    public var metadata: [String: String]?
+    /** Grouping labels, lowercased and deduplicated. Always present; `[]` when none were set. */
+    public var tags: [String]?
     public var from: String?
     public var to: [String]?
     public var cc: [String]?
@@ -38,7 +42,7 @@ public struct MessageDetail: Sendable, Codable, Hashable {
     public var html: String?
     public var headers: [String: String]?
 
-    public init(id: UUID, tenantId: UUID, messageId: String, sender: String, recipients: [String], subject: String? = nil, status: Status, queuedAt: Date, updatedAt: Date, bounceReason: String? = nil, sizeBytes: Int? = nil, from: String? = nil, to: [String]? = nil, cc: [String]? = nil, bcc: [String]? = nil, text: String? = nil, html: String? = nil, headers: [String: String]? = nil) {
+    public init(id: UUID, tenantId: UUID, messageId: String, sender: String, recipients: [String], subject: String? = nil, status: Status, queuedAt: Date, updatedAt: Date, bounceReason: String? = nil, sizeBytes: Int? = nil, metadata: [String: String]? = nil, tags: [String]? = nil, from: String? = nil, to: [String]? = nil, cc: [String]? = nil, bcc: [String]? = nil, text: String? = nil, html: String? = nil, headers: [String: String]? = nil) {
         self.id = id
         self.tenantId = tenantId
         self.messageId = messageId
@@ -50,6 +54,8 @@ public struct MessageDetail: Sendable, Codable, Hashable {
         self.updatedAt = updatedAt
         self.bounceReason = bounceReason
         self.sizeBytes = sizeBytes
+        self.metadata = metadata
+        self.tags = tags
         self.from = from
         self.to = to
         self.cc = cc
@@ -71,6 +77,8 @@ public struct MessageDetail: Sendable, Codable, Hashable {
         case updatedAt = "updated_at"
         case bounceReason = "bounce_reason"
         case sizeBytes = "size_bytes"
+        case metadata
+        case tags
         case from
         case to
         case cc
@@ -95,6 +103,8 @@ public struct MessageDetail: Sendable, Codable, Hashable {
         try container.encode(updatedAt, forKey: .updatedAt)
         try container.encodeIfPresent(bounceReason, forKey: .bounceReason)
         try container.encodeIfPresent(sizeBytes, forKey: .sizeBytes)
+        try container.encodeIfPresent(metadata, forKey: .metadata)
+        try container.encodeIfPresent(tags, forKey: .tags)
         try container.encodeIfPresent(from, forKey: .from)
         try container.encodeIfPresent(to, forKey: .to)
         try container.encodeIfPresent(cc, forKey: .cc)

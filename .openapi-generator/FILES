@@ -69,6 +69,10 @@ Sources/Lockally/Models/BatchLookupPublicKeys200Response.swift
 Sources/Lockally/Models/BatchLookupPublicKeys200ResponseDataInner.swift
 Sources/Lockally/Models/BatchResult.swift
 Sources/Lockally/Models/BillingStatus.swift
+Sources/Lockally/Models/BulkUpsertExternalContacts200Response.swift
+Sources/Lockally/Models/BulkUpsertExternalContacts200ResponseResultsInner.swift
+Sources/Lockally/Models/BulkUpsertExternalContactsRequest.swift
+Sources/Lockally/Models/BulkUpsertExternalContactsRequestContactsInner.swift
 Sources/Lockally/Models/CalendarEvent.swift
 Sources/Lockally/Models/CalendarIntegration.swift
 Sources/Lockally/Models/CalendarMember.swift
@@ -117,6 +121,7 @@ Sources/Lockally/Models/Draft.swift
 Sources/Lockally/Models/DraftList.swift
 Sources/Lockally/Models/DraftResult.swift
 Sources/Lockally/Models/ExportMailbox201Response.swift
+Sources/Lockally/Models/ExternalContactInput.swift
 Sources/Lockally/Models/GALSettings.swift
 Sources/Lockally/Models/GetAddOnStatus200Response.swift
 Sources/Lockally/Models/GetAuditSummary200Response.swift
@@ -139,6 +144,8 @@ Sources/Lockally/Models/GetDomainsStatus200Response.swift
 Sources/Lockally/Models/GetDomainsStatus200ResponseDomainsInner.swift
 Sources/Lockally/Models/GetDomainsStatus200ResponseDomainsInnerChecksInner.swift
 Sources/Lockally/Models/GetEncryptionKey200Response.swift
+Sources/Lockally/Models/GetEncryptionStatus200Response.swift
+Sources/Lockally/Models/GetEncryptionStatus200ResponseMailboxesInner.swift
 Sources/Lockally/Models/GetIPAssignment200Response.swift
 Sources/Lockally/Models/GetIntegrationsSummary200Response.swift
 Sources/Lockally/Models/GetIntegrationsSummary200ResponseApiKeysInner.swift
@@ -197,6 +204,8 @@ Sources/Lockally/Models/MessageStatsRates.swift
 Sources/Lockally/Models/MessageStatsWindow.swift
 Sources/Lockally/Models/Migration.swift
 Sources/Lockally/Models/MigrationCredential.swift
+Sources/Lockally/Models/MigrationDNSCheck.swift
+Sources/Lockally/Models/MigrationDomainDNS.swift
 Sources/Lockally/Models/MigrationEvent.swift
 Sources/Lockally/Models/MigrationMailbox.swift
 Sources/Lockally/Models/MigrationProgress.swift
@@ -210,6 +219,7 @@ Sources/Lockally/Models/ReplaceDistributionListMembersRequest.swift
 Sources/Lockally/Models/Resource.swift
 Sources/Lockally/Models/ReturnPath.swift
 Sources/Lockally/Models/ReturnPathCheck.swift
+Sources/Lockally/Models/RotateApiKeyRequest.swift
 Sources/Lockally/Models/RotateEncryptionKeyRequest.swift
 Sources/Lockally/Models/SendEmail200Response.swift
 Sources/Lockally/Models/SendEmail202Response.swift
@@ -228,6 +238,8 @@ Sources/Lockally/Models/Suppression.swift
 Sources/Lockally/Models/Template.swift
 Sources/Lockally/Models/TemplateInput.swift
 Sources/Lockally/Models/Tenant.swift
+Sources/Lockally/Models/TenantHealthCheck.swift
+Sources/Lockally/Models/TenantHealthReport.swift
 Sources/Lockally/Models/Thread.swift
 Sources/Lockally/Models/ThreadClassification.swift
 Sources/Lockally/Models/ThreadList.swift
@@ -235,8 +247,10 @@ Sources/Lockally/Models/ThreadMessage.swift
 Sources/Lockally/Models/ThreadMessageBody.swift
 Sources/Lockally/Models/ThreadMessageBodyBody.swift
 Sources/Lockally/Models/ThreadSummary.swift
+Sources/Lockally/Models/TrackingPolicy.swift
 Sources/Lockally/Models/UnitBundle.swift
 Sources/Lockally/Models/UpdateAdminRequest.swift
+Sources/Lockally/Models/UpdateApiKeyRequest.swift
 Sources/Lockally/Models/UpdateCalendarEventRequest.swift
 Sources/Lockally/Models/UpdateCalendarIntegrationRequest.swift
 Sources/Lockally/Models/UpdateCalendarMemberRequest.swift
@@ -250,6 +264,7 @@ Sources/Lockally/Models/UpdateMailboxRequest.swift
 Sources/Lockally/Models/UpdateMigrationMailboxRequest.swift
 Sources/Lockally/Models/UpdateMigrationRequest.swift
 Sources/Lockally/Models/UpdateResourceRequest.swift
+Sources/Lockally/Models/UpdateTrackingPolicyRequest.swift
 Sources/Lockally/Models/UpdateUserRequest.swift
 Sources/Lockally/Models/UpdateWebhookRequest.swift
 Sources/Lockally/Models/User.swift
@@ -289,6 +304,10 @@ docs/BatchLookupPublicKeys200ResponseDataInner.md
 docs/BatchResult.md
 docs/BillingAPI.md
 docs/BillingStatus.md
+docs/BulkUpsertExternalContacts200Response.md
+docs/BulkUpsertExternalContacts200ResponseResultsInner.md
+docs/BulkUpsertExternalContactsRequest.md
+docs/BulkUpsertExternalContactsRequestContactsInner.md
 docs/CalendarEvent.md
 docs/CalendarIntegration.md
 docs/CalendarMember.md
@@ -346,6 +365,7 @@ docs/DraftResult.md
 docs/DraftsAPI.md
 docs/EncryptionAPI.md
 docs/ExportMailbox201Response.md
+docs/ExternalContactInput.md
 docs/GALSettings.md
 docs/GetAddOnStatus200Response.md
 docs/GetAuditSummary200Response.md
@@ -368,6 +388,8 @@ docs/GetDomainsStatus200Response.md
 docs/GetDomainsStatus200ResponseDomainsInner.md
 docs/GetDomainsStatus200ResponseDomainsInnerChecksInner.md
 docs/GetEncryptionKey200Response.md
+docs/GetEncryptionStatus200Response.md
+docs/GetEncryptionStatus200ResponseMailboxesInner.md
 docs/GetIPAssignment200Response.md
 docs/GetIntegrationsSummary200Response.md
 docs/GetIntegrationsSummary200ResponseApiKeysInner.md
@@ -429,6 +451,8 @@ docs/MessageStatsRates.md
 docs/MessageStatsWindow.md
 docs/Migration.md
 docs/MigrationCredential.md
+docs/MigrationDNSCheck.md
+docs/MigrationDomainDNS.md
 docs/MigrationEvent.md
 docs/MigrationMailbox.md
 docs/MigrationProgress.md
@@ -444,6 +468,7 @@ docs/Resource.md
 docs/ResourcesAPI.md
 docs/ReturnPath.md
 docs/ReturnPathCheck.md
+docs/RotateApiKeyRequest.md
 docs/RotateEncryptionKeyRequest.md
 docs/SendAPI.md
 docs/SendEmail200Response.md
@@ -467,6 +492,8 @@ docs/TemplateInput.md
 docs/TemplatesAPI.md
 docs/Tenant.md
 docs/TenantAPI.md
+docs/TenantHealthCheck.md
+docs/TenantHealthReport.md
 docs/TestAPI.md
 docs/Thread.md
 docs/ThreadClassification.md
@@ -475,8 +502,10 @@ docs/ThreadMessage.md
 docs/ThreadMessageBody.md
 docs/ThreadMessageBodyBody.md
 docs/ThreadSummary.md
+docs/TrackingPolicy.md
 docs/UnitBundle.md
 docs/UpdateAdminRequest.md
+docs/UpdateApiKeyRequest.md
 docs/UpdateCalendarEventRequest.md
 docs/UpdateCalendarIntegrationRequest.md
 docs/UpdateCalendarMemberRequest.md
@@ -490,6 +519,7 @@ docs/UpdateMailboxRequest.md
 docs/UpdateMigrationMailboxRequest.md
 docs/UpdateMigrationRequest.md
 docs/UpdateResourceRequest.md
+docs/UpdateTrackingPolicyRequest.md
 docs/UpdateUserRequest.md
 docs/UpdateWebhookRequest.md
 docs/User.md

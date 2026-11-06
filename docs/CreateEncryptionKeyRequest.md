@@ -3,7 +3,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**mailboxEmail** | **String** |  | 
+**mailboxEmail** | **String** |  | [optional] 
 **publicKey** | **String** |  | 
 **encryptedPrivateKey** | **String** |  | 
 **kdfParams** | **JSONValue** |  | [optional] 

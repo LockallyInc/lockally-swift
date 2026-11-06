@@ -49,7 +49,7 @@ open class UsersAPI {
     }
 
     /**
-     Delete a user
+     Deprovision a user
      
      - parameter id: (path)  
      - parameter apiConfiguration: The configuration for the http request.
@@ -60,9 +60,9 @@ open class UsersAPI {
     }
 
     /**
-     Delete a user
+     Deprovision a user
      - DELETE /v1/users/{id}
-     - Soft-deletes the user by setting status to deprovisioned.
+     - Sets the user's status to `deprovisioned` and ends their access: each of their mailboxes and their console membership is disabled, app passwords are revoked, and every webmail and console session ends. Their mail is kept. API keys belong to the workspace and are not revoked; rotate any the person had access to. 
      - Bearer Token:
        - type: http
        - name: bearerAuth
@@ -190,6 +190,7 @@ open class UsersAPI {
     /**
      Update a user
      - PATCH /v1/users/{id}
+     - Setting `status` to `suspended` or `deprovisioned` takes away everything the person signs in with: each of their mailboxes and their console membership is disabled, app passwords are revoked, and every webmail and console session ends. Setting it back to `active` restores what the suspension disabled, and nothing an admin disabled for another reason. API keys belong to the workspace, not to the person who created them, and are not revoked; rotate any the person had access to. 
      - Bearer Token:
        - type: http
        - name: bearerAuth
