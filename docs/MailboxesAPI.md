@@ -7,16 +7,12 @@ Method | HTTP request | Description
 [**addSharedMember**](MailboxesAPI.md#addsharedmember) | **POST** /v1/mailboxes/{email}/members | Add a shared mailbox member
 [**createMailbox**](MailboxesAPI.md#createmailbox) | **POST** /v1/mailboxes | Create a mailbox
 [**deleteMailbox**](MailboxesAPI.md#deletemailbox) | **DELETE** /v1/mailboxes/{email} | Soft-delete a mailbox
-[**deleteVacationResponder**](MailboxesAPI.md#deletevacationresponder) | **DELETE** /v1/mailboxes/{email}/vacation | Remove the vacation responder
 [**downloadMailboxExport**](MailboxesAPI.md#downloadmailboxexport) | **GET** /v1/mailboxes/{email}/export/download | Download a previously-issued mailbox export
 [**exportMailbox**](MailboxesAPI.md#exportmailbox) | **POST** /v1/mailboxes/{email}/export | Request a mailbox export
 [**getMailbox**](MailboxesAPI.md#getmailbox) | **GET** /v1/mailboxes/{email} | Get a mailbox
-[**getVacationResponder**](MailboxesAPI.md#getvacationresponder) | **GET** /v1/mailboxes/{email}/vacation | Get the vacation responder
 [**listMailboxes**](MailboxesAPI.md#listmailboxes) | **GET** /v1/mailboxes | List mailboxes
 [**listSharedMembers**](MailboxesAPI.md#listsharedmembers) | **GET** /v1/mailboxes/{email}/members | List shared mailbox members
-[**listVacationResponders**](MailboxesAPI.md#listvacationresponders) | **GET** /v1/vacation | List all vacation responders
 [**removeSharedMember**](MailboxesAPI.md#removesharedmember) | **DELETE** /v1/mailboxes/{email}/members/{memberEmail} | Remove a shared mailbox member
-[**setVacationResponder**](MailboxesAPI.md#setvacationresponder) | **PUT** /v1/mailboxes/{email}/vacation | Set the vacation responder
 [**updateMailbox**](MailboxesAPI.md#updatemailbox) | **PATCH** /v1/mailboxes/{email} | Update a mailbox
 
 
@@ -138,56 +134,6 @@ let email = "email_example" // String |
 
 // Soft-delete a mailbox
 MailboxesAPI.deleteMailbox(email: email) { (response, error) in
-    guard error == nil else {
-        print(error)
-        return
-    }
-
-    if (response) {
-        dump(response)
-    }
-}
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **email** | **String** |  | 
-
-### Return type
-
-Void (empty response body)
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/problem+json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **deleteVacationResponder**
-```swift
-    open class func deleteVacationResponder(email: String, completion: @escaping (_ data: Void?, _ error: Error?) -> Void)
-```
-
-Remove the vacation responder
-
-Idempotent, 204 whether or not a row existed.
-
-### Example
-```swift
-// The following code samples are still beta. For any issue, please report via http://github.com/OpenAPITools/openapi-generator/issues/new
-import Lockally
-
-let email = "email_example" // String | 
-
-// Remove the vacation responder
-MailboxesAPI.deleteVacationResponder(email: email) { (response, error) in
     guard error == nil else {
         print(error)
         return
@@ -370,56 +316,6 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **getVacationResponder**
-```swift
-    open class func getVacationResponder(email: String, completion: @escaping (_ data: VacationResponder?, _ error: Error?) -> Void)
-```
-
-Get the vacation responder
-
-Returns the stored vacation rule or 404 if none is set.
-
-### Example
-```swift
-// The following code samples are still beta. For any issue, please report via http://github.com/OpenAPITools/openapi-generator/issues/new
-import Lockally
-
-let email = "email_example" // String | 
-
-// Get the vacation responder
-MailboxesAPI.getVacationResponder(email: email) { (response, error) in
-    guard error == nil else {
-        print(error)
-        return
-    }
-
-    if (response) {
-        dump(response)
-    }
-}
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **email** | **String** |  | 
-
-### Return type
-
-[**VacationResponder**](VacationResponder.md)
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json, application/problem+json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
 # **listMailboxes**
 ```swift
     open class func listMailboxes(limit: Int? = nil, completion: @escaping (_ data: ListMailboxes200Response?, _ error: Error?) -> Void)
@@ -518,52 +414,6 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **listVacationResponders**
-```swift
-    open class func listVacationResponders(completion: @escaping (_ data: ListVacationResponders200Response?, _ error: Error?) -> Void)
-```
-
-List all vacation responders
-
-Returns every vacation responder for the calling tenant.
-
-### Example
-```swift
-// The following code samples are still beta. For any issue, please report via http://github.com/OpenAPITools/openapi-generator/issues/new
-import Lockally
-
-
-// List all vacation responders
-MailboxesAPI.listVacationResponders() { (response, error) in
-    guard error == nil else {
-        print(error)
-        return
-    }
-
-    if (response) {
-        dump(response)
-    }
-}
-```
-
-### Parameters
-This endpoint does not need any parameter.
-
-### Return type
-
-[**ListVacationResponders200Response**](ListVacationResponders200Response.md)
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json, application/problem+json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
 # **removeSharedMember**
 ```swift
     open class func removeSharedMember(email: String, memberEmail: String, completion: @escaping (_ data: Void?, _ error: Error?) -> Void)
@@ -611,58 +461,6 @@ Void (empty response body)
 
  - **Content-Type**: Not defined
  - **Accept**: application/problem+json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **setVacationResponder**
-```swift
-    open class func setVacationResponder(email: String, setVacationResponderRequest: SetVacationResponderRequest, completion: @escaping (_ data: VacationResponder?, _ error: Error?) -> Void)
-```
-
-Set the vacation responder
-
-Upsert, same endpoint creates or replaces the rule. Clears `synced_at`; the rule is staged until a later sync pushes it to the mail server. 
-
-### Example
-```swift
-// The following code samples are still beta. For any issue, please report via http://github.com/OpenAPITools/openapi-generator/issues/new
-import Lockally
-
-let email = "email_example" // String | 
-let setVacationResponderRequest = setVacationResponder_request(enabled: false, params: VacationParams(subject: "subject_example", body: "body_example", startsAt: Date(), endsAt: Date())) // SetVacationResponderRequest | 
-
-// Set the vacation responder
-MailboxesAPI.setVacationResponder(email: email, setVacationResponderRequest: setVacationResponderRequest) { (response, error) in
-    guard error == nil else {
-        print(error)
-        return
-    }
-
-    if (response) {
-        dump(response)
-    }
-}
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **email** | **String** |  | 
- **setVacationResponderRequest** | [**SetVacationResponderRequest**](SetVacationResponderRequest.md) |  | 
-
-### Return type
-
-[**VacationResponder**](VacationResponder.md)
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json, application/problem+json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

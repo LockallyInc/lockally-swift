@@ -137,49 +137,6 @@ open class MailboxesAPI {
     }
 
     /**
-     Remove the vacation responder
-     
-     - parameter email: (path)  
-     - parameter apiConfiguration: The configuration for the http request.
-     - returns: Void
-     */
-    open class func deleteVacationResponder(email: String, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) {
-        return try await deleteVacationResponderWithRequestBuilder(email: email, apiConfiguration: apiConfiguration).execute().body
-    }
-
-    /**
-     Remove the vacation responder
-     - DELETE /v1/mailboxes/{email}/vacation
-     - Idempotent, 204 whether or not a row existed.
-     - Bearer Token:
-       - type: http
-       - name: bearerAuth
-     - parameter email: (path)  
-     - parameter apiConfiguration: The configuration for the http request.
-     - returns: RequestBuilder<Void> 
-     */
-    open class func deleteVacationResponderWithRequestBuilder(email: String, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<Void> {
-        var localVariablePath = "/v1/mailboxes/{email}/vacation"
-        let emailPreEscape = "\(APIHelper.mapValueToPathItem(email))"
-        let emailPostEscape = emailPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        localVariablePath = localVariablePath.replacingOccurrences(of: "{email}", with: emailPostEscape, options: .literal, range: nil)
-        let localVariableURLString = apiConfiguration.basePath + localVariablePath
-        let localVariableParameters: [String: any Sendable]? = nil
-
-        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
-
-        let localVariableNillableHeaders: [String: (any Sendable)?] = [
-            :
-        ]
-
-        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
-
-        let localVariableRequestBuilder: RequestBuilder<Void>.Type = apiConfiguration.requestBuilderFactory.getNonDecodableBuilder()
-
-        return localVariableRequestBuilder.init(method: "DELETE", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
-    }
-
-    /**
      Download a previously-issued mailbox export
      
      - parameter email: (path)  
@@ -310,49 +267,6 @@ open class MailboxesAPI {
     }
 
     /**
-     Get the vacation responder
-     
-     - parameter email: (path)  
-     - parameter apiConfiguration: The configuration for the http request.
-     - returns: VacationResponder
-     */
-    open class func getVacationResponder(email: String, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> VacationResponder {
-        return try await getVacationResponderWithRequestBuilder(email: email, apiConfiguration: apiConfiguration).execute().body
-    }
-
-    /**
-     Get the vacation responder
-     - GET /v1/mailboxes/{email}/vacation
-     - Returns the stored vacation rule or 404 if none is set.
-     - Bearer Token:
-       - type: http
-       - name: bearerAuth
-     - parameter email: (path)  
-     - parameter apiConfiguration: The configuration for the http request.
-     - returns: RequestBuilder<VacationResponder> 
-     */
-    open class func getVacationResponderWithRequestBuilder(email: String, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<VacationResponder> {
-        var localVariablePath = "/v1/mailboxes/{email}/vacation"
-        let emailPreEscape = "\(APIHelper.mapValueToPathItem(email))"
-        let emailPostEscape = emailPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        localVariablePath = localVariablePath.replacingOccurrences(of: "{email}", with: emailPostEscape, options: .literal, range: nil)
-        let localVariableURLString = apiConfiguration.basePath + localVariablePath
-        let localVariableParameters: [String: any Sendable]? = nil
-
-        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
-
-        let localVariableNillableHeaders: [String: (any Sendable)?] = [
-            :
-        ]
-
-        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
-
-        let localVariableRequestBuilder: RequestBuilder<VacationResponder>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
-
-        return localVariableRequestBuilder.init(method: "GET", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
-    }
-
-    /**
      List mailboxes
      
      - parameter limit: (query)  (optional, default to 50)
@@ -438,44 +352,6 @@ open class MailboxesAPI {
     }
 
     /**
-     List all vacation responders
-     
-     - parameter apiConfiguration: The configuration for the http request.
-     - returns: ListVacationResponders200Response
-     */
-    open class func listVacationResponders(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> ListVacationResponders200Response {
-        return try await listVacationRespondersWithRequestBuilder(apiConfiguration: apiConfiguration).execute().body
-    }
-
-    /**
-     List all vacation responders
-     - GET /v1/vacation
-     - Returns every vacation responder for the calling tenant.
-     - Bearer Token:
-       - type: http
-       - name: bearerAuth
-     - parameter apiConfiguration: The configuration for the http request.
-     - returns: RequestBuilder<ListVacationResponders200Response> 
-     */
-    open class func listVacationRespondersWithRequestBuilder(apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<ListVacationResponders200Response> {
-        let localVariablePath = "/v1/vacation"
-        let localVariableURLString = apiConfiguration.basePath + localVariablePath
-        let localVariableParameters: [String: any Sendable]? = nil
-
-        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
-
-        let localVariableNillableHeaders: [String: (any Sendable)?] = [
-            :
-        ]
-
-        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
-
-        let localVariableRequestBuilder: RequestBuilder<ListVacationResponders200Response>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
-
-        return localVariableRequestBuilder.init(method: "GET", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
-    }
-
-    /**
      Remove a shared mailbox member
      
      - parameter email: (path)  
@@ -520,51 +396,6 @@ open class MailboxesAPI {
         let localVariableRequestBuilder: RequestBuilder<Void>.Type = apiConfiguration.requestBuilderFactory.getNonDecodableBuilder()
 
         return localVariableRequestBuilder.init(method: "DELETE", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
-    }
-
-    /**
-     Set the vacation responder
-     
-     - parameter email: (path)  
-     - parameter setVacationResponderRequest: (body)  
-     - parameter apiConfiguration: The configuration for the http request.
-     - returns: VacationResponder
-     */
-    open class func setVacationResponder(email: String, setVacationResponderRequest: SetVacationResponderRequest, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) async throws(ErrorResponse) -> VacationResponder {
-        return try await setVacationResponderWithRequestBuilder(email: email, setVacationResponderRequest: setVacationResponderRequest, apiConfiguration: apiConfiguration).execute().body
-    }
-
-    /**
-     Set the vacation responder
-     - PUT /v1/mailboxes/{email}/vacation
-     - Upsert, same endpoint creates or replaces the rule. Clears `synced_at`; the rule is staged until a later sync pushes it to the mail server. 
-     - Bearer Token:
-       - type: http
-       - name: bearerAuth
-     - parameter email: (path)  
-     - parameter setVacationResponderRequest: (body)  
-     - parameter apiConfiguration: The configuration for the http request.
-     - returns: RequestBuilder<VacationResponder> 
-     */
-    open class func setVacationResponderWithRequestBuilder(email: String, setVacationResponderRequest: SetVacationResponderRequest, apiConfiguration: LockallyAPIConfiguration = LockallyAPIConfiguration.shared) -> RequestBuilder<VacationResponder> {
-        var localVariablePath = "/v1/mailboxes/{email}/vacation"
-        let emailPreEscape = "\(APIHelper.mapValueToPathItem(email))"
-        let emailPostEscape = emailPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        localVariablePath = localVariablePath.replacingOccurrences(of: "{email}", with: emailPostEscape, options: .literal, range: nil)
-        let localVariableURLString = apiConfiguration.basePath + localVariablePath
-        let localVariableParameters = JSONEncodingHelper.encodingParameters(forEncodableObject: setVacationResponderRequest, codableHelper: apiConfiguration.codableHelper)
-
-        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
-
-        let localVariableNillableHeaders: [String: (any Sendable)?] = [
-            "Content-Type": "application/json",
-        ]
-
-        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
-
-        let localVariableRequestBuilder: RequestBuilder<VacationResponder>.Type = apiConfiguration.requestBuilderFactory.getBuilder()
-
-        return localVariableRequestBuilder.init(method: "PUT", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true, apiConfiguration: apiConfiguration)
     }
 
     /**

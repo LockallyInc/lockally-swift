@@ -11,11 +11,11 @@
 
 # Lockally for iOS (Swift)
 
-Official Swift SDK for the [Lockally](https://lockally.com) API — transactional
-email, contacts, and agent inboxes — for iOS, macOS, tvOS, and watchOS.
+Official [Lockally](https://lockally.com) SDK for Swift: send email and manage mailboxes, domains and webhooks through the Lockally API.
+The package supports iOS, macOS, tvOS, and watchOS.
 
-- `Lockally` — the generated, fully-typed API client (async/await, URLSession).
-- `LockallyKit` — the secure auth + ergonomics layer: `TokenProvider`, OAuth 2.1
+- `Lockally`: the generated, fully-typed API client (async/await, URLSession).
+- `LockallyKit`: the secure auth + ergonomics layer: `TokenProvider`, OAuth 2.1
   PKCE, Keychain storage, automatic retries, idempotency keys, and cursor
   pagination.
 
@@ -34,7 +34,7 @@ pod 'Lockally', '~> 0.1'
 
 ## 🔐 Security: never ship a live API key in your app
 
-A mobile app is a distributed binary — anything compiled in, including a
+A mobile app is a distributed binary: anything compiled in, including a
 `lk_live_…` key, can be extracted. A leaked key with `messages:send` scope is an
 open spam relay billed to you.
 
@@ -62,7 +62,7 @@ let provider = BackendTokenProvider(
 let config = LockallyAPIConfiguration.lockally(provider: provider)
 ```
 
-The returned `config` already has retries, idempotency, and auth wired in — pass
+The returned `config` already has retries, idempotency, and auth wired in. Pass
 it to any generated API, e.g. `MessagesAPI`, `ContactsAPI`, `InboxesAPI`.
 
 ## Cookbook
@@ -99,9 +99,9 @@ let all = try await Paginator<Contact> { cursor in
 ### Push + email workflows
 Register the device's APNs token with your backend; your backend decides per
 event whether to push, email (via Lockally), or both. The SDK drives the email
-leg — delivery orchestration stays server-side where the key lives.
+leg; delivery orchestration stays server-side where the key lives.
 
-### Inbox / agent (OAuth PKCE — user tokens)
+### Inbox / agent (OAuth PKCE, user tokens)
 The one interactive user-token flow the API issues today (`inboxes:read` /
 `inboxes:write`):
 
@@ -123,4 +123,4 @@ string-matching and log `requestId` for support.
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+MIT. See [LICENSE](./LICENSE).

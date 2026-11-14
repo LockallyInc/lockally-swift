@@ -187,7 +187,6 @@ Sources/Lockally/Models/ListSharedMembers200Response.swift
 Sources/Lockally/Models/ListSuppressions200Response.swift
 Sources/Lockally/Models/ListTemplates200Response.swift
 Sources/Lockally/Models/ListUsers200Response.swift
-Sources/Lockally/Models/ListVacationResponders200Response.swift
 Sources/Lockally/Models/ListWebhooks200Response.swift
 Sources/Lockally/Models/LockallyCalendar.swift
 Sources/Lockally/Models/Mailbox.swift
@@ -228,7 +227,6 @@ Sources/Lockally/Models/SendEmailBatchRequest.swift
 Sources/Lockally/Models/SendEmailRequest.swift
 Sources/Lockally/Models/SendEmailRequestAttachmentsInner.swift
 Sources/Lockally/Models/SendMessage.swift
-Sources/Lockally/Models/SetVacationResponderRequest.swift
 Sources/Lockally/Models/SharedMember.swift
 Sources/Lockally/Models/SignupRequest.swift
 Sources/Lockally/Models/SimulatedInbound.swift
@@ -269,8 +267,6 @@ Sources/Lockally/Models/UpdateUserRequest.swift
 Sources/Lockally/Models/UpdateWebhookRequest.swift
 Sources/Lockally/Models/User.swift
 Sources/Lockally/Models/UserEvent.swift
-Sources/Lockally/Models/VacationParams.swift
-Sources/Lockally/Models/VacationResponder.swift
 Sources/Lockally/Models/Webhook.swift
 Sources/Lockally/Models/Whoami.swift
 Sources/Lockally/Models/WhoamiKey.swift
@@ -433,7 +429,6 @@ docs/ListSharedMembers200Response.md
 docs/ListSuppressions200Response.md
 docs/ListTemplates200Response.md
 docs/ListUsers200Response.md
-docs/ListVacationResponders200Response.md
 docs/ListWebhooks200Response.md
 docs/LockallyCalendar.md
 docs/Mailbox.md
@@ -478,7 +473,6 @@ docs/SendEmailBatchRequest.md
 docs/SendEmailRequest.md
 docs/SendEmailRequestAttachmentsInner.md
 docs/SendMessage.md
-docs/SetVacationResponderRequest.md
 docs/SharedMember.md
 docs/SignupAPI.md
 docs/SignupRequest.md
@@ -525,8 +519,6 @@ docs/UpdateWebhookRequest.md
 docs/User.md
 docs/UserEvent.md
 docs/UsersAPI.md
-docs/VacationParams.md
-docs/VacationResponder.md
 docs/Webhook.md
 docs/WebhooksAPI.md
 docs/Whoami.md
