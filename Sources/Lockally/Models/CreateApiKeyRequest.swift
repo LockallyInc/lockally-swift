@@ -16,6 +16,7 @@ public struct CreateApiKeyRequest: Sendable, Codable, Hashable {
         case mailboxesWrite = "mailboxes:write"
         case directorySync = "directory:sync"
         case inboxesRead = "inboxes:read"
+        case inboxesDraft = "inboxes:draft"
         case inboxesWrite = "inboxes:write"
         case sendRead = "send:read"
         case sendWrite = "send:write"

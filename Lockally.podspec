@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name        = 'Lockally'
-  s.version     = '0.5.0'
+  s.version     = '0.6.0'
   s.summary     = 'Official Lockally SDK for Swift: send email and manage mailboxes, domains and webhooks through the Lockally API.'
   s.homepage    = 'https://lockally.com'
   s.license     = { :type => 'MIT', :file => 'LICENSE' }

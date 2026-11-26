@@ -3,7 +3,8 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**from** | **String** |  | 
+**from** | **String** | Sender address, alone or as &#x60;Acme Orders &lt;orders@acme.com&gt;&#x60;. | 
+**fromName** | **String** | Display name shown next to &#x60;from&#x60;. Must match a name given in &#x60;from&#x60;. Cannot contain &#x60;@&#x60; or control characters. | [optional] 
 **to** | **[String]** |  | 
 **cc** | **[String]** |  | [optional] 
 **bcc** | **[String]** |  | [optional] 

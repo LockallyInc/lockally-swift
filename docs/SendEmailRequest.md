@@ -3,7 +3,8 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**from** | **String** |  | 
+**from** | **String** | Sender address, alone (&#x60;orders@acme.com&#x60;) or with a display name (&#x60;Acme Orders &lt;orders@acme.com&gt;&#x60;). Only the address is checked against your sender rules and used as the envelope sender. | 
+**fromName** | **String** | Display name recipients see next to &#x60;from&#x60;, e.g. &#x60;Acme Orders&#x60;. The same as giving it in &#x60;from&#x60;; if you do both, the names must match (400 &#x60;Conflicting from name&#x60;). Cannot contain &#x60;@&#x60; or control characters. Encoded and quoted for you, so accents, commas and quotes are safe. | [optional] 
 **to** | **[String]** |  | 
 **cc** | **[String]** |  | [optional] 
 **bcc** | **[String]** |  | [optional] 

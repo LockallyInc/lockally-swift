@@ -247,7 +247,7 @@ Submits an email for delivery via lockally. Returns 202 immediately once the mes
 import Lockally
 
 let idempotencyKey = "idempotencyKey_example" // String | 
-let sendEmailRequest = sendEmail_request(from: "from_example", to: ["to_example"], cc: ["cc_example"], bcc: ["bcc_example"], subject: "subject_example", text: "text_example", html: "html_example", headers: "TODO", replyTo: "replyTo_example", replyToName: "replyToName_example", unsubscribe: false, templateId: 123, variables: "TODO", sendAt: Date(), metadata: "TODO", tags: ["tags_example"], trackOpens: false, trackClicks: false, attachments: [sendEmail_request_attachments_inner(filename: "filename_example", contentType: "contentType_example", contentBase64: "contentBase64_example")]) // SendEmailRequest | 
+let sendEmailRequest = sendEmail_request(from: "from_example", fromName: "fromName_example", to: ["to_example"], cc: ["cc_example"], bcc: ["bcc_example"], subject: "subject_example", text: "text_example", html: "html_example", headers: "TODO", replyTo: "replyTo_example", replyToName: "replyToName_example", unsubscribe: false, templateId: 123, variables: "TODO", sendAt: Date(), metadata: "TODO", tags: ["tags_example"], trackOpens: false, trackClicks: false, attachments: [sendEmail_request_attachments_inner(filename: "filename_example", contentType: "contentType_example", contentBase64: "contentBase64_example")]) // SendEmailRequest | 
 
 // Send an email
 SendAPI.sendEmail(idempotencyKey: idempotencyKey, sendEmailRequest: sendEmailRequest) { (response, error) in
@@ -299,7 +299,7 @@ Sends up to 500 messages in one call. Each is validated and enqueued independent
 import Lockally
 
 let idempotencyKey = "idempotencyKey_example" // String | 
-let sendEmailBatchRequest = sendEmailBatch_request(messages: [SendMessage(from: "from_example", to: ["to_example"], cc: ["cc_example"], bcc: ["bcc_example"], subject: "subject_example", text: "text_example", html: "html_example", headers: "TODO", replyTo: "replyTo_example", replyToName: "replyToName_example", unsubscribe: false, templateId: 123, variables: "TODO", sendAt: Date(), attachments: [sendEmail_request_attachments_inner(filename: "filename_example", contentType: "contentType_example", contentBase64: "contentBase64_example")])], variables: "TODO") // SendEmailBatchRequest | 
+let sendEmailBatchRequest = sendEmailBatch_request(messages: [SendMessage(from: "from_example", fromName: "fromName_example", to: ["to_example"], cc: ["cc_example"], bcc: ["bcc_example"], subject: "subject_example", text: "text_example", html: "html_example", headers: "TODO", replyTo: "replyTo_example", replyToName: "replyToName_example", unsubscribe: false, templateId: 123, variables: "TODO", sendAt: Date(), attachments: [sendEmail_request_attachments_inner(filename: "filename_example", contentType: "contentType_example", contentBase64: "contentBase64_example")])], variables: "TODO") // SendEmailBatchRequest | 
 
 // Send a batch of emails
 SendAPI.sendEmailBatch(idempotencyKey: idempotencyKey, sendEmailBatchRequest: sendEmailBatchRequest) { (response, error) in

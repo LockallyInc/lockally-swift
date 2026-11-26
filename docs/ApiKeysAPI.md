@@ -18,7 +18,7 @@ Method | HTTP request | Description
 
 Create an API key
 
-Provisions a fresh API key for the calling tenant.  **The full `secret` is included in this response ONLY**, store it immediately. The cleartext secret is not recoverable from the argon2id hash kept server-side; rotate by creating a new key and revoking the old one. 
+Provisions a fresh API key for the calling tenant.  **The full `secret` is included in this response ONLY**, store it immediately. The cleartext secret is not recoverable from the argon2id hash kept server-side; rotate by creating a new key and revoking the old one.  **Optional `Idempotency-Key` header** (up to 255 characters). A repeat of the same key within 24 hours creates nothing and returns `409` with a problem document naming the key the first call created (`api_key_id`, `created_at`). The secret is never stored, so it cannot be replayed: revoke that key if its secret never reached you. A key used on a different endpoint in the last 24 hours returns `422`. Without the header, every call creates a key. 
 
 ### Example
 ```swift

@@ -9,9 +9,13 @@ import Foundation
 
 public struct SendEmailRequest: Sendable, Codable, Hashable {
 
+    public static let fromNameRule = StringRule(minLength: nil, maxLength: 200, pattern: nil)
     public static let toRule = ArrayRule(minItems: 1, maxItems: nil, uniqueItems: false)
     public static let tagsRule = ArrayRule(minItems: nil, maxItems: 10, uniqueItems: false)
+    /** Sender address, alone (`orders@acme.com`) or with a display name (`Acme Orders <orders@acme.com>`). Only the address is checked against your sender rules and used as the envelope sender. */
     public var from: String
+    /** Display name recipients see next to `from`, e.g. `Acme Orders`. The same as giving it in `from`; if you do both, the names must match (400 `Conflicting from name`). Cannot contain `@` or control characters. Encoded and quoted for you, so accents, commas and quotes are safe. */
+    public var fromName: String?
     public var to: [String]
     public var cc: [String]?
     public var bcc: [String]?
@@ -43,8 +47,9 @@ public struct SendEmailRequest: Sendable, Codable, Hashable {
     public var trackClicks: Bool?
     public var attachments: [SendEmailRequestAttachmentsInner]?
 
-    public init(from: String, to: [String], cc: [String]? = nil, bcc: [String]? = nil, subject: String? = nil, text: String? = nil, html: String? = nil, headers: [String: String]? = nil, replyTo: String? = nil, replyToName: String? = nil, unsubscribe: Bool? = nil, templateId: UUID? = nil, variables: [String: String]? = nil, sendAt: Date? = nil, metadata: [String: String]? = nil, tags: [String]? = nil, trackOpens: Bool? = nil, trackClicks: Bool? = nil, attachments: [SendEmailRequestAttachmentsInner]? = nil) {
+    public init(from: String, fromName: String? = nil, to: [String], cc: [String]? = nil, bcc: [String]? = nil, subject: String? = nil, text: String? = nil, html: String? = nil, headers: [String: String]? = nil, replyTo: String? = nil, replyToName: String? = nil, unsubscribe: Bool? = nil, templateId: UUID? = nil, variables: [String: String]? = nil, sendAt: Date? = nil, metadata: [String: String]? = nil, tags: [String]? = nil, trackOpens: Bool? = nil, trackClicks: Bool? = nil, attachments: [SendEmailRequestAttachmentsInner]? = nil) {
         self.from = from
+        self.fromName = fromName
         self.to = to
         self.cc = cc
         self.bcc = bcc
@@ -67,6 +72,7 @@ public struct SendEmailRequest: Sendable, Codable, Hashable {
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case from
+        case fromName = "from_name"
         case to
         case cc
         case bcc
@@ -92,6 +98,7 @@ public struct SendEmailRequest: Sendable, Codable, Hashable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(from, forKey: .from)
+        try container.encodeIfPresent(fromName, forKey: .fromName)
         try container.encode(to, forKey: .to)
         try container.encodeIfPresent(cc, forKey: .cc)
         try container.encodeIfPresent(bcc, forKey: .bcc)

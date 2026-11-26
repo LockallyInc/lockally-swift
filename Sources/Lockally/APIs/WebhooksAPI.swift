@@ -23,7 +23,7 @@ open class WebhooksAPI {
     /**
      Create a webhook
      - POST /v1/webhooks
-     - Subscribes a URL to one or more event types. Returns the `signing_secret` ONCE in the response, store it immediately. Every outbound POST is signed:      X-Lockally-Signature: t=<unix>,v1=<hex(hmac_sha256(secret, t + \".\" + body))>  Verify on your end using HMAC-SHA256 with a 5-minute timestamp window (replay protection). A reference verifier ships in [Signature verification](https://developers.lockally.com/webhooks/verification/).  Event names: see the [event catalogue](https://developers.lockally.com/webhooks/events/). 
+     - Subscribes a URL to one or more event types. Returns the `signing_secret` ONCE in the response, store it immediately. Every outbound POST is signed:      X-Lockally-Signature: t=<unix>,v1=<hex(hmac_sha256(secret, t + \".\" + body))>  Verify on your end using HMAC-SHA256 with a 5-minute timestamp window (replay protection). A reference verifier ships in [Signature verification](https://developers.lockally.com/webhooks/verification/).  Event names: see the [event catalogue](https://developers.lockally.com/webhooks/events/).  **Optional `Idempotency-Key` header** (up to 255 characters). A repeat of the same key within 24 hours creates nothing and returns `409` with a problem document naming the webhook the first call created (`webhook_id`, `created_at`). The signing secret is never stored, so it cannot be replayed: delete that webhook if its secret never reached you. A key used on a different endpoint in the last 24 hours returns `422`. Without the header, every call creates a webhook. 
      - Bearer Token:
        - type: http
        - name: bearerAuth
